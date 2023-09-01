@@ -1,0 +1,14 @@
+
+This generates a template for the actual parser and AST. If a lot of time has
+been put into the parser, and this needs to be run, then a DIFF should be used
+with the *.bak files to put the changes into the source code below.
+
+When the scanner reads a token, the parser goes into the functions to find
+it. It calls functions until there is either no more functions to call or until
+it finds the token that was read as the first thing that is checked for. If
+it's found, then the next token is read and the process repeats from where it
+currently is in the call tree.
+
+If there is an error, then the error message is placed and the function returns
+NULL. The error token is discarded and the execution resumes from a point in
+the call (TBD) tree such that the tokens can become synchronized again.

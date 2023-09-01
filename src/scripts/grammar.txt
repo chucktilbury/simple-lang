@@ -1,0 +1,535 @@
+# This is the complete grammar for the Simple language. It is not designed for
+# PEG or YACC style parser denerators. All this grammer is supposed to do is
+# provide a way to visualize the grammar for the language. This grammar is
+# written in a way that tries to make sense for an auto-generated recursive
+# decent parser. The idea is a create a parser as simply as possible.
+
+%tokens
+
+%keywords
+NAMESPACE, "namespace", "namespace keyword"
+CLASS, "class", "class keyword"
+CREATE, "create", "create keyword"
+DESTROY, "destroy", "destroy keyword"
+IF, "if", "if keyword"
+ELSE, "else", "else keyword"
+WHILE, "while", "while keyword"
+DO, "do", "do keyword"
+FOR, "for", "for keyword"
+IN, "in", "in keyword"
+TO, "to", "to keyword"
+AS, "as", "as keyword"
+TRY, "try", "try keyword"
+EXCEPT, "except", "except keyword"
+RAISE, "raise", "raise keyword"
+RETURN, "return", "return keyword"
+EXIT, "exit", "exit keyword"
+SWITCH, "switch", "switch keyword"
+CASE, "case", "case keyword"
+YIELD, "yield", "yield keyword"
+TRACE, "trace", "trace keyword"
+PRINT, "print", "print keyword"
+IMPORT, "import", "import keyword"
+TRUE, "true", "true boolean literal"
+FALSE, "false", "false boolean literal"
+BREAK, "break", "break keyword"
+CONTINUE, "continue", "continue keyword"
+IBEGIN, "inline_begin", "inline_begin keyword"
+IEND, "inline_end", "inline_end keyword"
+ENTRY, "entry", "entry keyword"
+MODULE, "module", "module keyword"
+DEFAULT, "default", "default keyword"
+PUBLIC, "public", "public keyword"
+PRIVATE, "private", "private keyword"
+PROTECTED, "protected", "protected  keyword"
+INTEGER, "int", "integer  keyword"
+UNSIGNED, "unsigned", "unsigned keyword"
+FLOAT, "float", "float keyword"
+STRING, "string", "string keyword"
+DICT, "dict", "dict keyword"
+LIST, "list", "list keyword"
+BOOLEAN, "bool", "bool keyword"
+NOTHING, "nothing", "nothing keyword"
+EXEC, "exec", "exec keyword"
+STATIC, "static", "static keyword"
+DYNAMIC, "dynamic", "dynamic keyword"
+OR, "or", "or operator"
+AND, "and", "and operator"
+NOT, "not", "not operator"
+%keywords
+
+%operators
+DOT, ".", "."
+COMMA, ",", ","
+COLON, ":", ":"
+CPAREN, ")", ")"
+OPAREN, "(", "("
+OBLOCK, "{", "{"
+CBLOCK, "}", "}"
+OBRACE, "[", "["
+CBRACE, "]", "]"
+ASSIGN, "=", "="
+ADD, "+", "+"
+SUB, "-", "-"
+MUL, "*", "*"
+DIV, "/", "/"
+MOD, "%", "%"
+POW, "^", "^"
+NOT, "!", "!"
+EQU, "==", "=="
+NEQU, "!=", "!="
+LORE, "<=", "<="
+GORE, ">=", ">="
+ADD_ASSIGN, "+=", "+="
+SUB_ASSIGN, "-=", "-="
+MUL_ASSIGN, "*=", "*="
+DIV_ASSIGN, "/=", "/="
+MOD_ASSIGN, "%=", "%="
+LESS, "<", "<"
+MORE, ">", ">"
+%operators
+
+%constructs
+SYMBOL, "", ""
+STRG_CONST, "", ""
+FLOAT_CONST, "", ""
+INT_CONST, "", ""
+UNSIGNED_CONST, "", ""
+%constructs
+
+
+%tokens
+
+%rules
+
+# The module is the name of this compiled object. When a library is imported,
+# The module name is referred to in order to access it. The MODULE statment must
+# appear as the first thing in the file.
+module
+    | MODULE SYMBOL COLON module_type module_body
+
+# There must be exactly one module in a program that is type EXEC. This is
+# where the program entry point is defined and there must be an ENTRY
+# definition in the root context of the EXEC module. The EXEC module is likely
+# to be small with imports defined.
+module_type
+    | EXEC
+    | STATIC
+    | DYNAMIC
+
+module_body
+    | OBLOCK module_body_list CBLOCK
+
+module_element
+    | namespace_element
+    | import_statement
+    | entry_definition
+
+module_body_list
+    | module_element module_body_list
+    | module_element
+
+# The import statement is causes the imported module to be included, similar to
+# the way that C include pre-processor statement works. However, it creates a
+# new namespace that will be accessed to reach the symbols that are in the
+# module. Imports of imports are automatically made PRIVATE and that cannot be
+# overridden.
+import_statement
+    | IMPORT compound_name
+    | IMPORT compound_name AS SYMBOL
+
+# This is the entry point of the program. It's similar to the int main() of a C
+# program but it does not take any parameters. Things like the command line are
+# accessed through libraries, if needed.
+entry_definition
+    | ENTRY func_block
+
+# Scope is the visibility of all of the objects that follow. The default scope
+# is PRIVATE. The scope can appear at the root level, in a namespace and in a
+# class. It sets the current scope used in that object.
+scope
+    | PUBLIC
+    | PRIVATE
+    | PROTECTED
+
+# A type_name defines the type of what follows it. This is a strongly typed
+# language. The NOTHING type defines that the type assignement is deferred until
+# a later point in the code. A variable cannot be assigned, read, or written
+# until the type is assigned using a cast to initialize the value.
+type_name
+    | FLOAT
+    | INTEGER
+    | UNSIGNED
+    | STRING
+    | DICT
+    | LIST
+    | BOOLEAN
+    | NOTHING
+    | compound_name
+
+empty_parens
+    | OPAREN CPAREN
+
+empty_block
+    | OBLOCK CBLOCK
+
+# A compound reference is a path to a specific memory object through the
+# namespace. The runtime is responsible for determining the type information
+# and whether the chain of objects is appropraite for the use.
+compound_reference
+    | compound_reference_element DOT compound_reference
+    | compound_reference_element
+
+compound_reference_element
+    | compound_name
+    | func_reference
+    | array_reference
+
+# A compound name is a simple chain of names that has to lead back to a memory
+# object. The runtime is responsible for type checking, however, the compiler
+# verifies that the names exist, the chain is valid, and that there is no
+# impossible attempt to use it. In other words, for example, an int cannot
+# assign to a string, but assigning to a class object can only be checked at
+# run time.
+compound_name
+    | SYMBOL DOT compound_name # this is a comment
+    | SYMBOL
+
+# All string literals can be formatted. Formatting is handled at runtime and a
+# string can be formatted multiple times. Formatting can also be specified at
+# runtime, so all the parser tries to do is verify that the syntax is possible.
+formatted_string
+    | STRG_CONST expr_parms
+    | STRG_CONST empty_parens
+    | STRG_CONST
+
+# This is a reference to a function; a function call.
+func_reference
+    | SYMBOL expr_parms
+    | SYMBOL empty_parens
+
+# This is a reference to an array element. An array element can have almost
+# anything as the array index. If it evailuates to a string, then it's a
+# dictionary reference. If it evaulates to a number, then it's a list reference.
+# That value could evaluate from any legal value reference. Also, an array can
+# have multiple indexes (i.e. arr[1][2][3]) and so the parser has to accept that
+# syntax.
+array_reference
+    | SYMBOL array_reference_list
+
+array_brace
+    | OBRACE expression CBRACE
+
+array_reference_list
+    | array_brace array_reference_list
+    | array_brace
+
+# Namespaces are optional. They are used to fix nameing collisions. Things that
+# are defined inside a namespace use the namespace name as part of the name
+# chain of a compound name or reference.
+namespace_definition
+    | NAMESPACE SYMBOL namespace_block
+
+namespace_block
+    | OBLOCK namespace_body CBLOCK
+    | empty_block
+
+namespace_body
+    | namespace_element namespace_block
+    | namespace_element
+
+# Any element that can appear inside a name space can also appear inside a
+# module.
+namespace_element
+    | namespace_definition
+    | class_definition
+    | func_definition
+    | ctor_definition
+    | dtor_definition
+    | var_declaration
+    | scope
+
+# A class definition has one optional parent class. The parent class is simply
+# made to be part of this class, similar to the way that Python does it.
+class_definition
+    | CLASS SYMBOL class_parameters class_block
+
+class_parameters
+    | OPAREN compound_name CPAREN
+    | empty_parens
+
+class_block
+    | OBLOCK class_body CBLOCK
+    | empty_block
+
+class_body
+    | class_body_element class_body
+    | class_body_element
+
+# A class body is very simple. It can only have variable and function
+# declarations. The scope determins access to elements in the class similar
+# to the way that C++ does it.
+class_body_element
+    | var_declaration
+    | func_declaration
+    | scope
+
+var_declaration
+    | type_name SYMBOL
+
+# Used for function definitions and declarations.
+var_declaration_list
+    | var_declaration COMMA var_declaration_list
+    | var_declaration
+
+func_declaration
+    | type_name SYMBOL func_decl_parms
+    | CREATE func_decl_parms
+    | DESTROY
+
+func_decl_parms
+    | OPAREN var_declaration_list CPAREN
+    | empty_parens
+
+bool_literal
+    | TRUE
+    | FALSE
+
+primary
+    | compound_reference
+    | const_expression
+    | expr_parens
+
+const_expression
+    | formatted_string
+    | bool_literal
+    | FLOAT_CONST
+    | INT_CONST
+    | UNSIGNED_CONST
+
+expression
+    | expr_and OR expression
+    | expr_and
+
+expr_and
+    | expr_equ AND expr_and
+    | expr_equ
+
+expr_equ
+    | expr_compe EQU expr_equ
+    | expr_compe NEQU expr_equ
+    | expr_compe
+
+expr_compe
+    | expr_comp LORE expr_compe
+    | expr_comp GORE expr_compe
+    | expr_comp
+
+expr_comp
+    | expr_term LESS expr_comp
+    | expr_term MORE expr_comp
+    | expr_term
+
+expr_term
+    | expr_pow ADD expr_term
+    | expr_pow SUB expr_term
+    | expr_pow
+
+expr_pow
+    | expr_fact POW expr_pow
+    | expr_fact
+
+expr_fact
+    | expr_unary MUL expr_fact
+    | expr_unary DIV expr_fact
+    | expr_unary MOD expr_fact
+    | expr_unary
+
+expr_unary
+    | primary
+    | SUB expr_unary
+    | ADD expr_unary
+    | NOT expr_unary
+    | type_name OPAREN expr_unary CPAREN
+
+expr_parms
+    | OPAREN expr_list CPAREN
+
+expr_list
+    | expression COMMA expr_list
+    | expression
+
+expr_parens
+    | OPAREN expression CPAREN
+
+func_definition
+    | var_declaration COLON SYMBOL func_decl_parms func_block
+
+ctor_definition
+    | SYMBOL COLON CREATE func_decl_parms func_block
+
+dtor_definition
+    | SYMBOL COLON DESTROY func_block
+
+assignment_oper
+    | ASSIGN
+    | ADD_ASSIGN
+    | SUB_ASSIGN
+    | MUL_ASSIGN
+    | DIV_ASSIGN
+    | MOD_ASSIGN
+
+assignment_tail
+    | assignment_oper expression
+
+assignment
+    | compound_reference assignment_tail
+
+data_definition
+    | var_declaration
+    | var_declaration assignment_tail
+
+func_block
+    | OBLOCK func_block_list CBLOCK
+    | empty_block
+
+func_block_list
+    | func_block_elem
+    | func_block_elem func_block_list
+
+# This rule is the catch-all for everything that can go into a function body.
+# In Simple, a function body is the same in all cases, however, if break or
+# continue is found in a block that is not a loop block, then that is a semantic
+# error, which is detected in the code, not the actual grammar.
+func_block_elem
+    | BREAK
+    | CONTINUE
+    | IBEGIN STRG_CONST IEND
+    | EXIT expr_parens
+    | YIELD OPAREN SYMBOL CPAREN
+    | RAISE OPAREN compound_name CPAREN
+    | return_statement
+    | trace_statement
+    | print_statement
+    | data_definition
+    | assignment
+    | compound_reference
+    | while_clause
+    | do_clause
+    | for_clause
+    | try_except_clause
+    | switch_case_clause
+    | if_else_clause
+    | func_block
+
+# Print a formatted string, or just a new line if there is no parameter. No
+# provision is made for multiple parameters.
+print_statement
+    | PRINT
+    | PRINT empty_parens
+    | PRINT OPAREN formatted_string CPAREN
+
+# Similar to the print statement but includes the file and function names.
+trace_statement
+    | TRACE
+    | TRACE empty_parens
+    | TRACE OPAREN formatted_string CPAREN
+
+# Return statement does exaclty what you would expect.
+return_statement
+    | RETURN
+    | RETURN empty_parens
+    | RETURN expr_parens
+
+# This convouluted rule has a notion of a "final" clause. In Simple, a blank
+# expression evaluates to TRUE. There is no notion of a "else if". The else
+# clause accepts an expression and acts as an "elif" would in other languages.
+# A else clause with a blank expression appears in the middle of a if/else
+# chain is a syntax error. Blank expressions can only appear at the end of an
+# if/else chain. Curly braces are mandatory for all code blocks.
+if_else_clause
+    | if_clause
+    | if_clause else_clause_list
+    | if_clause else_clause_final
+    | if_clause else_clause_list else_clause_final
+
+if_clause
+    | IF expr_parens func_block
+
+else_clause
+    | ELSE expr_parens func_block
+
+else_clause_list
+    | else_clause
+    | else_clause else_clause_list
+
+else_clause_final
+    | ELSE empty_parens func_block
+    | ELSE func_block
+
+# WHILE clause is very simple and functions as it does in other languages.
+while_clause
+    | WHILE expr_parens func_block
+
+# DO clause functions the same as it does in the C language.
+do_clause
+    | DO func_block WHILE expr_parens
+
+# The FOR clause has 2 variants. It can iterate a range of integers for
+# counting. The form of that is "for(x in 0 to 12) {}". It can also iterate a
+# data structure such as a list or dictionary. The form of that is
+# "for(x in data.structure.name){}" returns whatever is found in the iteration.
+for_entry
+    | FOR OPAREN SYMBOL IN
+
+for_clause
+    | for_entry compound_reference CPAREN func_block
+    | for_entry expression TO expression CPAREN func_block
+
+# SWITCH/CASE operates similarly to it does in C except that it can accept a
+# string literal as well as an integer literal. The syntax is different in that
+# the case clauses are function blocks with all associated scoping rules.
+switch_case_clause
+    | switch_clause case_clause_list case_clause_final
+
+switch_clause
+    | SWITCH expr_parens OBLOCK
+
+case_clause
+    | CASE OPAREN const_expression CPAREN func_block
+
+case_clause_list
+    | case_clause case_clause_list
+    | case_clause
+
+# Final case clause is required for SWITCH/CASE.
+case_clause_final
+    | CBLOCK
+    | DEFAULT func_block CBLOCK
+
+# TRY block works as expected. If soemthing raises an exception then it is
+# attempted to be caught in an EXCEPT block in the TRY/EXCEPT clause chain. If
+# the exception is not explicitly handled, then a except clause with a blank
+# parameter will capture it.
+try_except_clause
+    | try_clause except_clause_list
+    | try_clause except_clause_final
+    | try_clause except_clause_list except_clause_final
+
+try_clause
+    | TRY func_block
+
+# The compound name must name a class. The class in instntiated as a result of
+# being raised and the resulting object is in the SYMBOL.
+except_clause
+    | EXCEPT OPAREN compound_name CPAREN AS SYMBOL func_block
+
+except_clause_list
+    | except_clause except_clause_list
+    | except_clause
+
+except_clause_final
+    | EXCEPT empty_parens func_block
+    | EXCEPT func_block
+
+%rules
