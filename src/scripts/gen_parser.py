@@ -5,29 +5,50 @@ def load_tokens(fp):
     '''
     Load the tokens into a list.
     '''
-    tokens = []
+    tokens = {}
     for line in fp:
         line = line.strip()
         if line == "%tokens":
             for line in fp:
+                line = line.strip()
                 if line == "%tokens":
-                    break
-                elif line == "%keywords":
+                    return tokens
+                else:
                     if line == "%keywords":
-                        break
-                    s = line
-                    if len(s) > 0 and s[0] != '#':
-                        s = s.split()
-                        tokens = tokens + s
-                elif line == "%operators":
-                    if line == "%operators":
-                        break
-                    pass
-                elif line == "%constructs"
-                    if line == "%constructs"
-                        break
-                    pass
-    return ['none found']
+                        tokens['keywords'] = {}
+                        for line in fp:
+                            line = line.strip()
+                            if line == "%keywords":
+                                break
+                            else:
+                                lst = line.split(',')
+                                tokens['keywords'][lst[0]] = {}
+                                tokens['keywords'][lst[0]]['str'] = lst[1]
+                                tokens['keywords'][lst[0]]['name'] = lst[2]
+                    elif line == "%operators":
+                        tokens['operators'] = {}
+                        for line in fp:
+                            line = line.strip()
+                            if line == "%operators":
+                                break
+                            else:
+                                lst = line.split(',')
+                                tokens['operators'][lst[0]] = {}
+                                tokens['operators'][lst[0]]['str'] = lst[1]
+                                tokens['operators'][lst[0]]['name'] = lst[2]
+                    elif line == "%constructs":
+                        tokens['constructs'] = {}
+                        for line in fp:
+                            line = line.strip()
+                            if line == "%constructs":
+                                break
+                            else:
+                                lst = line.split(',')
+                                tokens['constructs'][lst[0]] = {}
+                                tokens['constructs'][lst[0]]['str'] = lst[1]
+                                tokens['constructs'][lst[0]]['name'] = lst[2]
+
+    #return tokens
 
 def load_rules(fp):
     '''
@@ -65,9 +86,12 @@ def load_all(fname):
 
     #pp(tokens)
     #pp(rules)
-    print("%d tokens and %d rules loaded"%(len(tokens), len(rules)))
+    print("%d tokens and %d rules loaded"%(
+        len(tokens['keywords'])+
+        len(tokens['operators'])+
+        len(tokens['constructs']), len(rules)))
 
-    return (tokens, rules)
+    return {'tokens': tokens, 'rules':rules}
 
 def mk_backup_file(fname):
 
@@ -82,27 +106,31 @@ def gen_token_header(data):
     mk_backup_file('token_types.h')
     with open('token_types.h', 'w') as fp:
         fp.write("/* generated file. DO NOT EDIT */\n")
-        fp.write("#ifndef _TOKENS_H\n")
-        fp.write("#define _TOKENS_H\n\n")
+        fp.write("#ifndef _TOKEN_TYPES_H\n")
+        fp.write("#define _TOKEN_TYPES_H\n\n")
         fp.write("typedef enum {\n")
         s = " = 1000,"
-        for item in data[0]:
-            fp.write("    %s%s\n"%(item, s))
-            s = ","
+        for item in data:
+            fp.write("    /* %s */\n"%(item))
+            for name in data[item]:
+                fp.write("    %s%s\n"%(name, s))
+                s = ","
         fp.write("} token_t;\n\n")
         fp.write("typedef struct {\n")
         fp.write("    token_t type;\n")
         fp.write("    const char* str;\n")
         fp.write("    const char* name;\n")
         fp.write("} token_value_t = {\n")
-        for item in data[0]:
-            fp.write("    {%s, \"\", \"\"},\n"%(item))
+        for item in data:
+            fp.write("    /* %s */\n"%(item))
+            for name in data[item]:
+                fp.write("    {%s, %s, %s},\n"%(name, data[item][name]['str'], data[item][name]['name']))
         fp.write("};\n\n")
-        fp.write("#endif /* _TOKENS_H */\n\n")
+        fp.write("#endif /* _TOKEN_TYPES_H */\n\n")
 
 def gen_parser_header(data):
 
-    (tokens, rules) = data
+    rules = data['rules']
 
     mk_backup_file('parser.h')
     with open('parser.h', 'w') as fp:
@@ -140,7 +168,7 @@ def gen_ast_struct(fp, data):
 
 def gen_ast_header(data):
 
-    (tokens, rules) = data
+    rules = data['rules']
 
     mk_backup_file('ast.h')
     with open('ast.h', 'w') as fp:
@@ -177,7 +205,8 @@ def gen_ast_header(data):
 
 def gen_ast_src(data):
 
-    (tokens, rules) = data
+    rules = data['rules']
+
     mk_backup_file('ast.c')
     with open("ast.c", "w") as fp:
         fp.write("/* generated file. DO NOT EDIT */\n")
@@ -206,7 +235,8 @@ def gen_parse_func(fp, name, data):
 
 def gen_parser_src(data):
 
-    (tokens, rules) = data
+    rules = data['rules']
+
     mk_backup_file('parser.c')
     with open("parser.c", "w") as fp:
         fp.write("/* generated file. DO NOT EDIT */\n")
@@ -233,7 +263,7 @@ def gen_parser_src(data):
             fp.write("}\n\n")
 
 def emit_all(data):
-    gen_token_header(data)
+    gen_token_header(data['tokens'])
     gen_ast_header(data)
     gen_ast_src(data)
     gen_parser_header(data)
@@ -242,4 +272,5 @@ def emit_all(data):
 if __name__ == '__main__':
 
     data = load_all('grammar.txt')
-    #emit_all(data)
+    #pp(data)
+    emit_all(data)
