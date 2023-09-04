@@ -7,15 +7,26 @@ def load_tokens(fp):
     '''
     tokens = []
     for line in fp:
-        if line.strip() == "%tokens":
+        line = line.strip()
+        if line == "%tokens":
             for line in fp:
-                if line.strip() == "%tokens":
-                    return tokens
-                else:
-                    s = line.strip()
+                if line == "%tokens":
+                    break
+                elif line == "%keywords":
+                    if line == "%keywords":
+                        break
+                    s = line
                     if len(s) > 0 and s[0] != '#':
                         s = s.split()
                         tokens = tokens + s
+                elif line == "%operators":
+                    if line == "%operators":
+                        break
+                    pass
+                elif line == "%constructs"
+                    if line == "%constructs"
+                        break
+                    pass
     return ['none found']
 
 def load_rules(fp):
@@ -221,12 +232,14 @@ def gen_parser_src(data):
             fp.write("    return ptr;\n")
             fp.write("}\n\n")
 
-if __name__ == '__main__':
-
-    data = load_all('grammar.txt')
-
+def emit_all(data):
     gen_token_header(data)
     gen_ast_header(data)
     gen_ast_src(data)
     gen_parser_header(data)
     gen_parser_src(data)
+
+if __name__ == '__main__':
+
+    data = load_all('grammar.txt')
+    #emit_all(data)

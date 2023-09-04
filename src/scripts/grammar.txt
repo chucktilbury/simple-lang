@@ -90,11 +90,11 @@ MORE, ">", ">"
 %operators
 
 %constructs
-SYMBOL, "", ""
-STRG_CONST, "", ""
-FLOAT_CONST, "", ""
-INT_CONST, "", ""
-UNSIGNED_CONST, "", ""
+SYMBOL, "", "Identifier name"
+STRG_CONST, "", "String constant"
+FLOAT_CONST, "", "Float constant"
+INT_CONST, "", "Integer constant"
+UNSIGNED_CONST, "", "Unsigned constant"
 %constructs
 
 
