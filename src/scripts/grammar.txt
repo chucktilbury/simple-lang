@@ -6,6 +6,8 @@
 
 %tokens
 
+# defined name, recognized name, friendly name.
+# keywords are sorted by gen_parser by defined name.
 %keywords
 NAMESPACE, "namespace", "namespace keyword"
 CLASS, "class", "class keyword"
@@ -16,9 +18,9 @@ ELSE, "else", "else keyword"
 WHILE, "while", "while keyword"
 DO, "do", "do keyword"
 FOR, "for", "for keyword"
-IN, "in", "in keyword"
-TO, "to", "to keyword"
-AS, "as", "as keyword"
+IN, "in", "in operator"
+TO, "to", "to operator"
+AS, "as", "as operator"
 TRY, "try", "try keyword"
 EXCEPT, "except", "except keyword"
 RAISE, "raise", "raise keyword"
@@ -56,6 +58,7 @@ DYNAMIC, "dynamic", "dynamic keyword"
 OR, "or", "or operator"
 AND, "and", "and operator"
 NOT, "not", "not operator"
+CONST, "const", "const keyword"
 %keywords
 
 %operators
@@ -97,6 +100,11 @@ INT_CONST, "", "Integer constant"
 UNSIGNED_CONST, "", "Unsigned constant"
 %constructs
 
+%overhead
+END_OF_FILE, "", "END OF FILE"
+END_OF_INPUT, "", "END OF INPUT"
+ERROR, "", "ERROR"
+%overhead
 
 %tokens
 
@@ -247,6 +255,7 @@ namespace_element
     | ctor_definition
     | dtor_definition
     | var_declaration
+    | CONST var_declaration
     | scope
 
 # A class definition has one optional parent class. The parent class is simply
@@ -271,6 +280,7 @@ class_body
 # to the way that C++ does it.
 class_body_element
     | var_declaration
+    | CONST var_declaration
     | func_declaration
     | scope
 

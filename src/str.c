@@ -12,7 +12,7 @@ typedef struct {
     int cap;
 } _string;
 
-static void append(_string* ptr, void* buf, size_t size) {
+static void append(_string* ptr, void* buf, int size) {
 
     if(ptr->len+size > ptr->cap) {
         while(ptr->len+size > ptr->cap)

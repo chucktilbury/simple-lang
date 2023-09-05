@@ -5,6 +5,7 @@
  *
  */
 #include "scanner.h"
+#include "filebuf.h"
 
 void doImport(const char* fname) {
 

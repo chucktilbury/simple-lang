@@ -10,7 +10,7 @@
 #include "str.h"
 
 // This value is returned when there are no more characters to scan.
-#define END_OF_INPUT    -1
+#define EOI -1
 
 void init_charbuffer(const char* fname);
 void open_file(const char* fname);

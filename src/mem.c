@@ -1,11 +1,11 @@
 
+#include "mem.h"
+
 #ifndef ENABLE_GC
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "mem.h"
 
 void* mem_malloc(size_t size) {
 

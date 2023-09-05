@@ -18,7 +18,7 @@ void print_token(Token* tok) {
 
     if(tok != NULL) {
         printf("token name: \"%s\"\n", get_string_ptr(tok->str));
-        printf("      type: %s (%d)\n", tokToStr(tok->type), tok->type);
+        printf("      type: %s (%d)\n", tok_to_str(tok->type), tok->type);
         printf("      %s:%d:%d\n", get_file_name(), get_line_no(), get_col_no());
     }
     else
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
         tok = crnt_token();
         print_token(tok);
         consume_token();
-    } while(tok->type != TOK_END_INPUT);
+    } while(tok->type != END_OF_INPUT);
 
     //if(mod == NULL || get_num_errors() != 0) {
     //    printf("parse fail: %d error(s)\n", get_num_errors());

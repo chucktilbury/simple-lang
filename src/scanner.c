@@ -9,51 +9,10 @@
 #include "errors.h"
 #include "scanner.h"
 #include "filebuf.h"
+#include "token_types.h"
 
 // The current token
 static Token crnt_tok;
-// This is used to translate a string to a token value using binary search.
-static struct _token_list_ {
-    TokenType type;
-    const char* str;
-} token_list[] = {
-    // Note that this data structure **must** be in sorted order.
-    {TOK_AND, "and"},
-    {TOK_BOOLEAN, "bool"},
-    {TOK_BOOLEAN, "boolean"},
-    {TOK_BREAK, "break"},
-    {TOK_CONST, "const"},
-    {TOK_CONTINUE, "continue"},
-    {TOK_DO, "do"},
-    {TOK_ELSE, "else"},
-    {TOK_EQU, "equ"},
-    {TOK_EXIT, "exit"},
-    {TOK_FALSE, "false"},
-    {TOK_FLOAT, "float"},
-    {TOK_IF, "if"},
-    {TOK_IMPORT, "import"},
-    {TOK_INT, "int"},
-    {TOK_INT, "integer"},
-    {TOK_NEQU, "neq"},
-    {TOK_NOTHING, "noth"},
-    {TOK_NOTHING, "nothing"},
-    {TOK_NOT, "not"},
-    {TOK_OR, "or"},
-    {TOK_PRINT, "print"},
-    {TOK_RETURN, "return"},
-    {TOK_STRING, "strg"},
-    {TOK_STRING, "string"},
-    {TOK_STRUCT, "struct"},
-    {TOK_TRACE, "trace"},
-    {TOK_TRUE, "true"},
-    {TOK_TYPE, "type"},
-    {TOK_UINT, "uint"},
-    {TOK_UINT, "unsigned"},
-    {TOK_WHILE, "while"},
-    {TOK_YIELD, "yield"},
-};
-// number of items in the data structure list.
-#define NUM_TOK_LST (sizeof(token_list)/sizeof(struct _token_list_))
 
 /**
  * @brief Return whether this character can be at the end of something like a
@@ -88,7 +47,7 @@ static void eat_comment() {
     while(true) {
         if(get_crnt_char() == '\n')
             break;
-        else if(get_crnt_char() == END_OF_INPUT) {
+        else if(get_crnt_char() == EOF) {
             syntax("unexpected end of file in comment");
             exit(1);
         }
@@ -113,46 +72,14 @@ static void get_name() {
 }
 
 /**
- * @brief Do a binary search on the array. It returns a pointer to the data
- * that was found or NULL if the string was not found.
- *
- * @param lst
- * @param str
- * @param start
- * @param end
- * @return struct _token_list_*
- */
-static struct _token_list_* search(struct _token_list_* lst,
-                                    const char* str, int start, int end) {
-    if(start >= end)
-        return NULL;
-    else {
-        int mid = (start + end) / 2;
-        int val = strcmp(str, lst[mid].str);
-        if(val == 0)
-            return &lst[mid];
-        else if(val > 0)
-            return search(lst, str, mid + 1, end);
-        else
-            return search(lst, str, start, end - 1);
-    }
-}
-
-/**
  * @brief Scan the token list with a binary search. If the string is found,
  * then return the token value. Otherwise, return the TOK_SYMBOL token value.
  *
  * @return TokenType
  */
-static TokenType check_keyword(const char* str) {
+static token_type_t check_keyword(const char* str) {
 
-    TokenType type = TOK_SYMBOL;
-    struct _token_list_* tok = search(token_list, str, 0, NUM_TOK_LST);
-
-    if(tok != NULL)
-        type = tok->type;
-
-    return type;
+    return search_keyword(str);
 }
 
 /**
@@ -219,115 +146,115 @@ static void get_operator() {
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_NEQU;
+                crnt_tok.type = NEQU;
             }
             else
-                crnt_tok.type = TOK_ERROR;
+                crnt_tok.type = ERROR;
             break;
         case '+':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_ADD_ASSIGN;
+                crnt_tok.type = ADD_ASSIGN;
             }
             else
-                crnt_tok.type = TOK_ADD;
+                crnt_tok.type = ADD;
             break;
         case '-':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_SUB_ASSIGN;
+                crnt_tok.type = SUB_ASSIGN;
             }
             else
-                crnt_tok.type = TOK_SUB;
+                crnt_tok.type = SUB;
             break;
         case '*':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_MUL_ASSIGN;
+                crnt_tok.type = MUL_ASSIGN;
             }
             else
-                crnt_tok.type = TOK_MUL;
+                crnt_tok.type = MUL;
             break;
         case '/':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_DIV_ASSIGN;
+                crnt_tok.type = DIV_ASSIGN;
             }
             else
-                crnt_tok.type = TOK_DIV;
+                crnt_tok.type = DIV;
             break;
         case '%':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_MOD_ASSIGN;
+                crnt_tok.type = MOD_ASSIGN;
             }
             else
-                crnt_tok.type = TOK_MOD;
+                crnt_tok.type = MOD;
             break;
         case '=':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_EQU; // "=="
+                crnt_tok.type = EQU; // "=="
             }
             else
-                crnt_tok.type = TOK_EQUAL; // assignment
+                crnt_tok.type = ASSIGN; // assignment
             break;
         case '<':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_ADD_ASSIGN;
+                crnt_tok.type = LORE;
             }
             else
-                crnt_tok.type = TOK_OPBRACE;
+                crnt_tok.type = LESS;
             break;
         case '>':
             save_char();
             if(get_crnt_char() == '=') {
                 save_char();
-                crnt_tok.type = TOK_ADD_ASSIGN;
+                crnt_tok.type = GORE;
             }
             else
-                crnt_tok.type = TOK_CPBRACE;
+                crnt_tok.type = MORE;
             break;
 
         case '(':
             save_char();
-            crnt_tok.type = TOK_OPAREN;
+            crnt_tok.type = OPAREN;
             break;
         case ')':
             save_char();
-            crnt_tok.type = TOK_CPAREN;
+            crnt_tok.type = CPAREN;
             break;
         case '[':
             save_char();
-            crnt_tok.type = TOK_OSBRACE;
+            crnt_tok.type = OBRACE;
             break;
         case ']':
             save_char();
-            crnt_tok.type = TOK_CSBRACE;
+            crnt_tok.type = CBRACE;
             break;
         case '{':
             save_char();
-            crnt_tok.type = TOK_OCBRACE;
+            crnt_tok.type = OBLOCK;
             break;
         case '}':
             save_char();
-            crnt_tok.type = TOK_CCBRACE;
+            crnt_tok.type = CBLOCK;
             break;
         case ',':
             save_char();
-            crnt_tok.type = TOK_COMMA;
+            crnt_tok.type = COMMA;
             break;
         case '.':
             save_char();
-            crnt_tok.type = TOK_DOT;
+            crnt_tok.type = DOT;
             break;
     }
 }
@@ -375,7 +302,7 @@ static void get_float_tail() {
 
     int ch = get_crnt_char();
     if(!isdigit(ch)) {
-        crnt_tok.type = TOK_ERROR;
+        crnt_tok.type = ERROR;
         syntax("expected a digit but got a '%c'", ch);
     }
     else
@@ -391,7 +318,7 @@ static void get_float_tail() {
             save_char();
             ch = get_crnt_char();
             if(!isdigit(ch)) {
-                crnt_tok.type = TOK_ERROR;
+                crnt_tok.type = ERROR;
                 syntax("expected a digit but got a '%c'", ch);
             }
             else
@@ -407,7 +334,7 @@ static void get_float_tail() {
 static void clear_token() {
 
     clear_string(crnt_tok.str);
-    crnt_tok.type = TOK_END_INPUT;
+    crnt_tok.type = END_OF_INPUT;
 }
 
 /**
@@ -429,7 +356,7 @@ void consume_token() {
 
 
     int ch;
-    int state = 0;
+    //int state = 0;
     int finished = 0;
 
     clear_token();
@@ -446,7 +373,7 @@ void consume_token() {
             consume_char();
         }
         else if(ch == END_OF_INPUT) {
-            crnt_tok.type = TOK_END_INPUT;
+            crnt_tok.type = END_OF_INPUT;
             finished++;
         }
         else if(isalpha(ch)||ch == '_') {
@@ -462,29 +389,29 @@ void consume_token() {
             // Octal numbers are not supported.
             if(isdigit(ch)) {
                 syntax("Malformed number. Octal number syntax is not supported.");
-                crnt_tok.type = TOK_ERROR;
+                crnt_tok.type = ERROR;
             }
             // if the next char is a 'x' or 'X', then its unsigned
             else if(ch == 'x' || ch == 'X') {
                 save_char();
                 get_xdigits();
-                crnt_tok.type = TOK_UNUM;
+                crnt_tok.type = UNSIGNED_CONST;
 
                 ch = get_crnt_char();
                 if(!isstopper(ch)) {
                     syntax("Malformed number. Expected space or operator but got '%c'", ch);
-                    crnt_tok.type = TOK_ERROR;
+                    crnt_tok.type = ERROR;
                 }
             }
             // if the next char is a '.', then it's a float
             else if(ch == '.') {
                 save_char(); // save the dot. The next char should be a digit.
                 get_float_tail();
-                crnt_tok.type = TOK_FNUM;
+                crnt_tok.type = FLOAT_CONST;
             }
             // if the next character is not a digit then it's just a 0 by itself
             else {
-                crnt_tok.type = TOK_INUM;
+                crnt_tok.type = INT_CONST;
             }
             finished++;
         }
@@ -498,29 +425,29 @@ void consume_token() {
             if(get_crnt_char() == '.') {
                 save_char(); // save the dot. The next char should be a digit.
                 get_float_tail();
-                crnt_tok.type = TOK_FNUM;
+                crnt_tok.type = FLOAT_CONST;
             }
             else {
-                crnt_tok.type = TOK_INUM;
+                crnt_tok.type = INT_CONST;
             }
             // numbers must be followed by space or operator
             int ch = get_crnt_char();
             if(!isstopper(ch)) {
                 syntax("Malformed number. Expected space or operator but got '%c'", ch);
-                crnt_tok.type = TOK_ERROR;
+                crnt_tok.type = ERROR;
             }
             finished++;
         }
         // read a single quote string
         else if(ch == '\'') {
             get_squote();
-            crnt_tok.type = TOK_QSTRG;
+            crnt_tok.type = STRG_CONST;
             finished++;
         }
         // read a double quote string
         else if(ch == '\"') {
             get_dquote();
-            crnt_tok.type = TOK_QSTRG;
+            crnt_tok.type = STRG_CONST;
             finished++;
         }
         // read an operator. These a figured out in a switch/case elsewhere.
@@ -545,73 +472,5 @@ void consume_token() {
 Token* crnt_token() {
 
     return &crnt_tok;
-}
-
-/**
- * @brief Return a string that represents the token ID. For error handling.
- *
- * @param tt
- * @return const char*
- */
-const char* tokToStr(TokenType tt) {
-
-    return ( tt == TOK_BREAK)? "break":
-        ( tt == TOK_CONTINUE)? "continue":
-        ( tt == TOK_CONST)? "const":
-        ( tt == TOK_IMPORT)? "import":
-        ( tt == TOK_DO)? "do":
-        ( tt == TOK_ELSE)? "else":
-        ( tt == TOK_IF)? "if":
-        ( tt == TOK_RETURN)? "return":
-        ( tt == TOK_WHILE)? "while":
-        ( tt == TOK_TRUE)? "true":
-        ( tt == TOK_FALSE)? "false":
-        ( tt == TOK_YIELD)? "yield":
-        ( tt == TOK_EXIT)? "exit":
-        ( tt == TOK_STRUCT)? "struct":
-        ( tt == TOK_TRACE)? "trace":
-        ( tt == TOK_PRINT)? "print":
-        ( tt == TOK_TYPE)? "type":
-        ( tt == TOK_INT)? "integer":
-        ( tt == TOK_UINT)? "unsigned":
-        ( tt == TOK_NOTHING)? "nothing":
-        ( tt == TOK_STRING)? "string":
-        ( tt == TOK_BOOLEAN)? "boolean":
-        ( tt == TOK_FLOAT)? "float":
-        ( tt == TOK_LORE)? "<=":
-        ( tt == TOK_GORE)? ">=":
-        ( tt == TOK_EQU)? "equ":
-        ( tt == TOK_NEQU)? "neq":
-        ( tt == TOK_OR)? "or":
-        ( tt == TOK_AND)? "and":
-        ( tt == TOK_ADD_ASSIGN)? "+=":
-        ( tt == TOK_SUB_ASSIGN)? "-=":
-        ( tt == TOK_MUL_ASSIGN)? "*=":
-        ( tt == TOK_DIV_ASSIGN)? "/=":
-        ( tt == TOK_MOD_ASSIGN)? "%=":
-        ( tt == TOK_NOT)? "not":
-        ( tt == TOK_ADD)? "+":
-        ( tt == TOK_SUB)? "-":
-        ( tt == TOK_MUL)? "*":
-        ( tt == TOK_DIV)? "/":
-        ( tt == TOK_MOD)? "%":
-        ( tt == TOK_EQUAL)? "=":
-        ( tt == TOK_OPAREN)? "(":
-        ( tt == TOK_CPAREN)? ")":
-        ( tt == TOK_OPBRACE)? "<":
-        ( tt == TOK_CPBRACE)? ">":
-        ( tt == TOK_OSBRACE)? "[":
-        ( tt == TOK_CSBRACE)? "]":
-        ( tt == TOK_OCBRACE)? "{":
-        ( tt == TOK_CCBRACE)? "}":
-        ( tt == TOK_COMMA)? ",":
-        ( tt == TOK_DOT)? ".":
-        ( tt == TOK_SYMBOL)? "SYMBOL":
-        ( tt == TOK_INUM)? "INT":
-        ( tt == TOK_FNUM)? "FLOAT":
-        ( tt == TOK_UNUM)? "UNSIGNED":
-        ( tt == TOK_QSTRG)? "QSTRING":
-        ( tt == TOK_ERROR)? "ERROR":
-        ( tt == TOK_END_INPUT)? "END OF INPUT": "UNKNOWN";
 }
 

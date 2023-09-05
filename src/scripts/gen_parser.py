@@ -12,43 +12,47 @@ def load_tokens(fp):
             for line in fp:
                 line = line.strip()
                 if line == "%tokens":
+                    tokens['keywords'].sort()
                     return tokens
                 else:
                     if line == "%keywords":
-                        tokens['keywords'] = {}
+                        tokens['keywords'] = []
                         for line in fp:
                             line = line.strip()
                             if line == "%keywords":
                                 break
                             else:
-                                lst = line.split(',')
-                                tokens['keywords'][lst[0]] = {}
-                                tokens['keywords'][lst[0]]['str'] = lst[1]
-                                tokens['keywords'][lst[0]]['name'] = lst[2]
+                                tokens['keywords'].append(line.split(','))
                     elif line == "%operators":
-                        tokens['operators'] = {}
+                        tokens['operators'] = []
                         for line in fp:
                             line = line.strip()
                             if line == "%operators":
                                 break
                             else:
-                                lst = line.split(',')
-                                tokens['operators'][lst[0]] = {}
-                                tokens['operators'][lst[0]]['str'] = lst[1]
-                                tokens['operators'][lst[0]]['name'] = lst[2]
+                                s = line.split(',')
+                                # special cases....
+                                if s[0].strip() != "NOT":
+                                    if s[0].strip() == "COMMA":
+                                        tokens['operators'].append(["COMMA", ' ","', ' ","'])
+                                    else:
+                                        tokens['operators'].append(s)
                     elif line == "%constructs":
-                        tokens['constructs'] = {}
+                        tokens['constructs'] = []
                         for line in fp:
                             line = line.strip()
                             if line == "%constructs":
                                 break
                             else:
-                                lst = line.split(',')
-                                tokens['constructs'][lst[0]] = {}
-                                tokens['constructs'][lst[0]]['str'] = lst[1]
-                                tokens['constructs'][lst[0]]['name'] = lst[2]
-
-    #return tokens
+                                tokens['constructs'].append(line.split(','))
+                    elif line == "%overhead":
+                        tokens['overhead'] = []
+                        for line in fp:
+                            line = line.strip()
+                            if line == "%overhead":
+                                break
+                            else:
+                                tokens['overhead'].append(line.split(','))
 
 def load_rules(fp):
     '''
@@ -89,6 +93,7 @@ def load_all(fname):
     print("%d tokens and %d rules loaded"%(
         len(tokens['keywords'])+
         len(tokens['operators'])+
+        len(tokens['overhead'])+
         len(tokens['constructs']), len(rules)))
 
     return {'tokens': tokens, 'rules':rules}
@@ -105,28 +110,77 @@ def gen_token_header(data):
 
     mk_backup_file('token_types.h')
     with open('token_types.h', 'w') as fp:
-        fp.write("/* generated file. DO NOT EDIT */\n")
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
         fp.write("#ifndef _TOKEN_TYPES_H\n")
         fp.write("#define _TOKEN_TYPES_H\n\n")
+        fp.write("#define TOK_BEGIN 1000\n\n")
         fp.write("typedef enum {\n")
-        s = " = 1000,"
+        s = " = TOK_BEGIN,"
         for item in data:
-            fp.write("    /* %s */\n"%(item))
+            fp.write("\n    /* %s */\n"%(item))
             for name in data[item]:
-                fp.write("    %s%s\n"%(name, s))
+                fp.write("    %s%s\n"%(name[0], s))
                 s = ","
-        fp.write("} token_t;\n\n")
+        fp.write("} token_type_t;\n\n")
+        fp.write("const char* tok_to_str(token_type_t type);\n")
+        fp.write("token_type_t search_keyword(const char* str);\n\n")
+        fp.write("#endif /* _TOKEN_TYPES_H */\n\n")
+
+def gen_token_src(data):
+
+    mk_backup_file('token_types.c')
+    with open('token_types.c', 'w') as fp:
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
+        fp.write("#include <stdio.h>\n")
+        fp.write("#include <stdlib.h>\n")
+        fp.write("#include <stdint.h>\n")
+        fp.write("#include <string.h>\n")
+        fp.write("#include <stdbool.h>\n\n")
+        fp.write("#include \"token_types.h\"\n\n")
+
         fp.write("typedef struct {\n")
-        fp.write("    token_t type;\n")
+        fp.write("    token_type_t type;\n")
         fp.write("    const char* str;\n")
         fp.write("    const char* name;\n")
-        fp.write("} token_value_t = {\n")
+        fp.write("} token_value_t;\n\n")
         for item in data:
-            fp.write("    /* %s */\n"%(item))
+            fp.write("/* %s */\n"%(item))
+            fp.write("token_value_t %s[] = {\n"%(item))
             for name in data[item]:
-                fp.write("    {%s, %s, %s},\n"%(name, data[item][name]['str'], data[item][name]['name']))
-        fp.write("};\n\n")
-        fp.write("#endif /* _TOKEN_TYPES_H */\n\n")
+                fp.write("    {%s,%s,%s},\n"%(name[0], name[1], name[2]))
+            fp.write("};\n\n")
+        fp.write("#define MAX_TOKENS ((sizeof(keywords)+ \\\n")
+        fp.write("                     sizeof(operators)+ \\\n")
+        fp.write("                     sizeof(overhead)+ \\\n")
+        fp.write("                     sizeof(constructs))/sizeof(token_value_t))\n\n")
+        fp.write("#define TOK_IDX(t) ((t)-TOK_BEGIN)\n\n")
+
+        fp.write("static token_type_t search(token_value_t* lst, const char* str, int start, int end) {\n\n")
+        fp.write("    if(start >= end)\n")
+        fp.write("        return SYMBOL;\n")
+        fp.write("    else {\n")
+        fp.write("        int mid = (start + end) / 2;\n")
+        fp.write("        int val = strcmp(str, lst[mid].str);\n")
+        fp.write("        if(val == 0)\n")
+        fp.write("            return lst[mid].type;\n")
+        fp.write("        else if(val > 0)\n")
+        fp.write("            return search(lst, str, mid + 1, end);\n")
+        fp.write("        else\n")
+        fp.write("            return search(lst, str, start, end - 1);\n")
+        fp.write("    }\n")
+        fp.write("}\n\n")
+
+        fp.write("token_type_t search_keyword(const char* str) {\n")
+        fp.write("    return search(keywords, str, 0, (sizeof(keywords)/sizeof(token_value_t)));\n")
+        fp.write("}\n\n")
+
+        fp.write("const char* tok_to_str(token_type_t type) {\n")
+        fp.write("    return\n")
+        for item in data:
+            for name in data[item]:
+                fp.write("        (type == %s)? %s:\n"%(name[0], name[2]))
+        fp.write("        \"UNKNOWN\";\n")
+        fp.write("}\n\n")
 
 def gen_parser_header(data):
 
@@ -134,7 +188,7 @@ def gen_parser_header(data):
 
     mk_backup_file('parser.h')
     with open('parser.h', 'w') as fp:
-        fp.write("/* generated file. DO NOT EDIT */\n")
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
         fp.write("#ifndef _PARSER_H\n")
         fp.write("#define _PARSER_H\n\n")
 
@@ -172,10 +226,11 @@ def gen_ast_header(data):
 
     mk_backup_file('ast.h')
     with open('ast.h', 'w') as fp:
-        fp.write("/* generated file. DO NOT EDIT */\n")
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
         fp.write("#ifndef _AST_H\n")
         fp.write("#define _AST_H\n\n")
-
+        fp.write("#include \"scanner.h\"\n")
+        fp.write("#include \"token_types.h\"\n\n")
         fp.write("typedef enum {\n")
         s = " = 1100,"
         for item in rules:
@@ -199,6 +254,7 @@ def gen_ast_header(data):
             fp.write(" */\n")
             fp.write("typedef struct _ast_%s_t_ {\n"%(item))
             fp.write("    ast_type_t type;\n")
+            fp.write("    Token* tok;\n")
             fp.write("} ast_%s_t;\n"%(item))
             fp.write("ast_%s_t* create_%s();\n\n"%(item, item))
         fp.write("#endif /* _AST_H */\n\n")
@@ -209,14 +265,14 @@ def gen_ast_src(data):
 
     mk_backup_file('ast.c')
     with open("ast.c", "w") as fp:
-        fp.write("/* generated file. DO NOT EDIT */\n")
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
         fp.write("#include <stdio.h>\n")
         fp.write("#include <stdlib.h>\n")
         fp.write("#include <stdint.h>\n")
         fp.write("#include <stdbool.h>\n\n")
 
         fp.write("#include \"ast.h\"\n")
-        fp.write("#include \"mem.h\"\n\n")
+        fp.write("#include \"mem.h\"\n")
 
         for item in rules:
             fp.write("/*\n")
@@ -226,6 +282,8 @@ def gen_ast_src(data):
             fp.write(" */\n")
             fp.write("ast_%s_t* create_%s() {\n"%(item, item))
             fp.write("    ast_%s_t* ptr = _alloc_ds(ast_%s_t);\n"%(item, item))
+            fp.write("    ptr->type.type = AST_%s_T;\n"%(item))
+            fp.write("    ptr->tok = crnt_token();\n")
             fp.write("    return ptr;\n")
             fp.write("}\n\n")
 
@@ -239,14 +297,14 @@ def gen_parser_src(data):
 
     mk_backup_file('parser.c')
     with open("parser.c", "w") as fp:
-        fp.write("/* generated file. DO NOT EDIT */\n")
+        fp.write("/*\n  this file is generated.\n  --- DO NOT EDIT ---\n */\n")
         fp.write("#include <stdio.h>\n")
         fp.write("#include <stdlib.h>\n")
         fp.write("#include <stdint.h>\n")
         fp.write("#include <stdbool.h>\n\n")
 
         fp.write("#include \"ast.h\"\n")
-        fp.write("#include \"tokens.h\"\n")
+        fp.write("#include \"token_types.h\"\n")
         fp.write("#include \"scanner.h\"\n")
         fp.write("#include \"parser.h\"\n")
         fp.write("#include \"mem.h\"\n\n")
@@ -264,6 +322,7 @@ def gen_parser_src(data):
 
 def emit_all(data):
     gen_token_header(data['tokens'])
+    gen_token_src(data['tokens'])
     gen_ast_header(data)
     gen_ast_src(data)
     gen_parser_header(data)

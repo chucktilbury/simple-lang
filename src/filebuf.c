@@ -129,8 +129,8 @@ int get_col_no() {
  */
 int consume_char() {
 
-    if(crnt_char == END_OF_INPUT)
-        return END_OF_INPUT;
+    if(crnt_char == EOI)
+        return EOI;
 
     int ch;
     if(file_stack != NULL) {
@@ -148,7 +148,7 @@ int consume_char() {
             file_stack->col++;
     }
     else
-        ch = END_OF_INPUT;
+        ch = EOI;
 
     crnt_char = ch;
     return ch;
