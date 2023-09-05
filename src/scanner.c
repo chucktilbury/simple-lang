@@ -372,7 +372,7 @@ void consume_token() {
         else if(isspace(ch)) {
             consume_char();
         }
-        else if(ch == END_OF_INPUT) {
+        else if(ch == EOI) {
             crnt_tok.type = END_OF_INPUT;
             finished++;
         }
