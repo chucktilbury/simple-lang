@@ -13,9 +13,10 @@ def load_tokens(fp):
                     return tokens
                 else:
                     s = line.strip()
-                    if len(s) > 0 and s[0] != '#':
+                    if len(s) > 0 and s[0] != '#' and s[0] != '%':
                         s = s.split()
-                        tokens = tokens + s
+                        if not s[0].strip(',') in tokens:
+                            tokens.append(s[0].strip(','))
     return ['none found']
 
 def load_rules(fp):
