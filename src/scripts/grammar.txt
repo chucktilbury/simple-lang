@@ -62,16 +62,6 @@ CONST, "const", "const keyword"
 %keywords
 
 %operators
-DOT, ".", "."
-COMMA, ",", ","
-COLON, ":", ":"
-CPAREN, ")", ")"
-OPAREN, "(", "("
-OBLOCK, "{", "{"
-CBLOCK, "}", "}"
-OBRACE, "[", "["
-CBRACE, "]", "]"
-ASSIGN, "=", "="
 ADD, "+", "+"
 SUB, "-", "-"
 MUL, "*", "*"
@@ -83,6 +73,7 @@ EQU, "==", "=="
 NEQU, "!=", "!="
 LORE, "<=", "<="
 GORE, ">=", ">="
+ASSIGN, "=", "="
 ADD_ASSIGN, "+=", "+="
 SUB_ASSIGN, "-=", "-="
 MUL_ASSIGN, "*=", "*="
@@ -92,12 +83,24 @@ LESS, "<", "<"
 MORE, ">", ">"
 %operators
 
+%punctuation
+DOT, ".", "."
+COMMA, ",", ","
+COLON, ":", ":"
+CPAREN, ")", ")"
+OPAREN, "(", "("
+OBLOCK, "{", "{"
+CBLOCK, "}", "}"
+OBRACE, "[", "["
+CBRACE, "]", "]"
+%punctuation
+
 %constructs
-SYMBOL, "", "Identifier name"
-STRG_CONST, "", "String constant"
-FLOAT_CONST, "", "Float constant"
-INT_CONST, "", "Integer constant"
-UNSIGNED_CONST, "", "Unsigned constant"
+SYMBOL, "const char*", "Identifier name"
+STRG_CONST, "const char*", "String constant"
+FLOAT_CONST, "double", "Float constant"
+INT_CONST, "int64_t", "Integer constant"
+UNSIGNED_CONST, "uint64_t", "Unsigned constant"
 %constructs
 
 %overhead

@@ -9,7 +9,6 @@
 #include "errors.h"
 #include "scanner.h"
 #include "filebuf.h"
-#include "token_types.h"
 
 // The current token
 static Token crnt_tok;
@@ -149,7 +148,7 @@ static void get_operator() {
                 crnt_tok.type = NEQU;
             }
             else
-                crnt_tok.type = ERROR;
+                crnt_tok.type = NOT;
             break;
         case '+':
             save_char();
@@ -363,7 +362,6 @@ void consume_token() {
 
     while(!finished) {
         ch = get_crnt_char();
-        // getting a name
         // skip a comment
         if(ch == ';') {
             eat_comment();

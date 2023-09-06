@@ -10,15 +10,15 @@ OBJS	=	main.o \
 			scanner.o \
 			str.o \
 			ast.o \
-			token_types.o \
+			tokens.o \
 			parser.o
 
 GEN_FILES	=	parser.c \
 			parser.h \
 			ast.c \
 			ast.h \
-			token_types.c \
-			token_types.h
+			tokens.c \
+			tokens.h
 
 COPTS	=	-Wall -Wextra -Wpedantic
 DEBUG 	=	-g
@@ -46,7 +46,7 @@ scanner.o: scanner.c scanner.h
 str.o: str.c str.h
 ast.o: ast.c ast.h
 parser.o: parser.c parser.h
-token_types.o: token_types.c token_types.h
+tokens.o: tokens.c tokens.h
 
 clean:
 	-rm -f $(TARGET) $(OBJS)

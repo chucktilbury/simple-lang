@@ -2,11 +2,11 @@ ast.c
 ast.h
 parser.c
 parser.h
-token_types.c
-token_types.h
-scripts/*.bak
-scripts/*.c
-scripts/*.h
+tokens.c
+tokens.h
+src/scripts/*.bak
+src/scripts/*.c
+src/scripts/*.h
 docs/out/
 src/simp
 
