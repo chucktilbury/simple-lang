@@ -1,0 +1,1260 @@
+/*
+  this file is generated.
+  --- DO NOT EDIT ---
+ */
+#ifndef _AST_H
+#define _AST_H
+
+#include "scanner.h"
+#include "tokens.h"
+
+typedef enum {
+    AST_module_T = 1100,
+    AST_module_type_T,
+    AST_module_body_T,
+    AST_module_element_T,
+    AST_module_body_list_T,
+    AST_import_statement_T,
+    AST_entry_definition_T,
+    AST_scope_T,
+    AST_type_name_T,
+    AST_compound_reference_T,
+    AST_compound_reference_element_T,
+    AST_compound_name_T,
+    AST_formatted_string_T,
+    AST_func_reference_T,
+    AST_array_reference_T,
+    AST_array_brace_T,
+    AST_array_reference_list_T,
+    AST_namespace_definition_T,
+    AST_namespace_block_T,
+    AST_namespace_body_T,
+    AST_namespace_element_T,
+    AST_class_definition_T,
+    AST_class_parameters_T,
+    AST_class_block_T,
+    AST_class_body_T,
+    AST_class_body_element_T,
+    AST_var_declaration_T,
+    AST_var_declaration_list_T,
+    AST_func_declaration_T,
+    AST_func_decl_parms_T,
+    AST_bool_literal_T,
+    AST_primary_T,
+    AST_const_expression_T,
+    AST_expression_T,
+    AST_expr_and_T,
+    AST_expr_equ_T,
+    AST_expr_compe_T,
+    AST_expr_comp_T,
+    AST_expr_term_T,
+    AST_expr_pow_T,
+    AST_expr_fact_T,
+    AST_expr_unary_T,
+    AST_expr_list_T,
+    AST_func_definition_T,
+    AST_ctor_definition_T,
+    AST_dtor_definition_T,
+    AST_assignment_oper_T,
+    AST_assignment_tail_T,
+    AST_assignment_T,
+    AST_data_definition_T,
+    AST_func_block_T,
+    AST_func_block_list_T,
+    AST_func_block_elem_T,
+    AST_break_statement_T,
+    AST_continue_statement_T,
+    AST_inline_statement_T,
+    AST_exit_statement_T,
+    AST_yield_statement_T,
+    AST_raise_statement_T,
+    AST_print_statement_T,
+    AST_trace_statement_T,
+    AST_return_statement_T,
+    AST_if_else_clause_T,
+    AST_if_clause_T,
+    AST_else_clause_T,
+    AST_else_clause_list_T,
+    AST_else_clause_final_T,
+    AST_while_clause_T,
+    AST_do_clause_T,
+    AST_for_entry_T,
+    AST_for_clause_T,
+    AST_switch_case_clause_T,
+    AST_switch_clause_T,
+    AST_case_clause_T,
+    AST_case_clause_list_T,
+    AST_case_clause_final_T,
+    AST_try_except_clause_T,
+    AST_try_clause_T,
+    AST_except_clause_T,
+    AST_except_clause_list_T,
+    AST_except_clause_final_T,
+} AST_TYPE_T;
+
+/* this exists so that we can find out what the type is, even
+   if the pointer of of type void */
+#define TYPEOF(p) ((ast_type_t*)(p))->type;
+typedef struct _ast_type_t_ {
+    AST_TYPE_T type;
+} ast_type_t;
+
+/* ast data structures and create function protos. */
+/*
+ *    generator: normal
+ *    module
+ *        | MODULE SYMBOL COLON module_type module_body
+ */
+typedef struct _ast_module_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_module_type_t_* module_type;
+    struct _ast_module_body_t_* module_body;
+} ast_module_t;
+ast_module_t* create_module();
+
+/*
+ *    generator: one_keyword
+ *    module_type
+ *        | EXEC
+ *        | STATIC
+ *        | DYNAMIC
+ */
+typedef struct _ast_module_type_t_ {
+    ast_type_t type;
+    int term_value;
+} ast_module_type_t;
+ast_module_type_t* create_module_type();
+
+/*
+ *    generator: normal
+ *    module_body
+ *        | OBLOCK module_body_list CBLOCK
+ */
+typedef struct _ast_module_body_t_ {
+    ast_type_t type;
+    struct _ast_module_body_list_t_* module_body_list;
+} ast_module_body_t;
+ast_module_body_t* create_module_body();
+
+/*
+ *    generator: one_nterm
+ *    module_element
+ *        | namespace_element
+ *        | import_statement
+ *        | entry_definition
+ */
+typedef struct _ast_module_element_t_ {
+    ast_type_t type;
+    void* nterm_value;
+} ast_module_element_t;
+ast_module_element_t* create_module_element();
+
+/*
+ *    generator: normal
+ *    module_body_list
+ *        | module_element module_body_list
+ *        | module_element
+ */
+typedef struct _ast_module_body_list_t_ {
+    ast_type_t type;
+    struct _ast_module_element_t_* module_element;
+    struct _ast_module_body_list_t_* module_body_list;
+    struct _ast_module_element_t_* module_element;
+} ast_module_body_list_t;
+ast_module_body_list_t* create_module_body_list();
+
+/*
+ *    generator: one_nterm
+ *    import_statement
+ *        | IMPORT compound_name
+ *        | IMPORT compound_name AS SYMBOL
+ */
+typedef struct _ast_import_statement_t_ {
+    ast_type_t type;
+    void* nterm_value;
+    const char* symbol_term;
+} ast_import_statement_t;
+ast_import_statement_t* create_import_statement();
+
+/*
+ *    generator: normal
+ *    entry_definition
+ *        | ENTRY func_block
+ */
+typedef struct _ast_entry_definition_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+} ast_entry_definition_t;
+ast_entry_definition_t* create_entry_definition();
+
+/*
+ *    generator: one_keyword
+ *    scope
+ *        | PUBLIC
+ *        | PRIVATE
+ *        | PROTECTED
+ */
+typedef struct _ast_scope_t_ {
+    ast_type_t type;
+    int term_value;
+} ast_scope_t;
+ast_scope_t* create_scope();
+
+/*
+ *    generator: one_keyword
+ *    type_name
+ *        | FLOAT
+ *        | INTEGER
+ *        | UNSIGNED
+ *        | STRING
+ *        | DICT
+ *        | LIST
+ *        | BOOLEAN
+ *        | NOTHING
+ *        | compound_name
+ */
+typedef struct _ast_type_name_t_ {
+    ast_type_t type;
+    int term_value;
+    struct _ast_compound_name_t_* compound_name;
+} ast_type_name_t;
+ast_type_name_t* create_type_name();
+
+/*
+ *    generator: normal
+ *    compound_reference
+ *        | compound_reference_element DOT compound_reference
+ *        | compound_reference_element
+ */
+typedef struct _ast_compound_reference_t_ {
+    ast_type_t type;
+    struct _ast_compound_reference_element_t_* compound_reference_element;
+    struct _ast_compound_reference_t_* compound_reference;
+    struct _ast_compound_reference_element_t_* compound_reference_element;
+} ast_compound_reference_t;
+ast_compound_reference_t* create_compound_reference();
+
+/*
+ *    generator: one_nterm
+ *    compound_reference_element
+ *        | compound_name
+ *        | func_reference
+ *        | array_reference
+ */
+typedef struct _ast_compound_reference_element_t_ {
+    ast_type_t type;
+    void* nterm_value;
+} ast_compound_reference_element_t;
+ast_compound_reference_element_t* create_compound_reference_element();
+
+/*
+ *    generator: one_construct
+ *    compound_name
+ *        | SYMBOL DOT compound_name
+ *        | SYMBOL
+ */
+typedef struct _ast_compound_name_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_compound_name_t_* compound_name;
+} ast_compound_name_t;
+ast_compound_name_t* create_compound_name();
+
+/*
+ *    generator: one_construct
+ *    formatted_string
+ *        | STRG_CONST
+ *        | STRG_CONST OPAREN CPAREN
+ *        | STRG_CONST OPAREN expr_list CPAREN
+ */
+typedef struct _ast_formatted_string_t_ {
+    ast_type_t type;
+    const char* strg_const_term;
+    struct _ast_expr_list_t_* expr_list;
+} ast_formatted_string_t;
+ast_formatted_string_t* create_formatted_string();
+
+/*
+ *    generator: one_construct
+ *    func_reference
+ *        | SYMBOL OPAREN CPAREN
+ *        | SYMBOL OPAREN expr_list CPAREN
+ */
+typedef struct _ast_func_reference_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_expr_list_t_* expr_list;
+} ast_func_reference_t;
+ast_func_reference_t* create_func_reference();
+
+/*
+ *    generator: normal
+ *    array_reference
+ *        | SYMBOL array_reference_list
+ */
+typedef struct _ast_array_reference_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_array_reference_list_t_* array_reference_list;
+} ast_array_reference_t;
+ast_array_reference_t* create_array_reference();
+
+/*
+ *    generator: normal
+ *    array_brace
+ *        | OBRACE expression CBRACE
+ */
+typedef struct _ast_array_brace_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+} ast_array_brace_t;
+ast_array_brace_t* create_array_brace();
+
+/*
+ *    generator: normal
+ *    array_reference_list
+ *        | array_brace array_reference_list
+ *        | array_brace
+ */
+typedef struct _ast_array_reference_list_t_ {
+    ast_type_t type;
+    struct _ast_array_brace_t_* array_brace;
+    struct _ast_array_reference_list_t_* array_reference_list;
+    struct _ast_array_brace_t_* array_brace;
+} ast_array_reference_list_t;
+ast_array_reference_list_t* create_array_reference_list();
+
+/*
+ *    generator: normal
+ *    namespace_definition
+ *        | NAMESPACE SYMBOL namespace_block
+ */
+typedef struct _ast_namespace_definition_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_namespace_block_t_* namespace_block;
+} ast_namespace_definition_t;
+ast_namespace_definition_t* create_namespace_definition();
+
+/*
+ *    generator: normal
+ *    namespace_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK namespace_body CBLOCK
+ */
+typedef struct _ast_namespace_block_t_ {
+    ast_type_t type;
+    struct _ast_namespace_body_t_* namespace_body;
+} ast_namespace_block_t;
+ast_namespace_block_t* create_namespace_block();
+
+/*
+ *    generator: normal
+ *    namespace_body
+ *        | namespace_element namespace_block
+ *        | namespace_element
+ */
+typedef struct _ast_namespace_body_t_ {
+    ast_type_t type;
+    struct _ast_namespace_element_t_* namespace_element;
+    struct _ast_namespace_block_t_* namespace_block;
+    struct _ast_namespace_element_t_* namespace_element;
+} ast_namespace_body_t;
+ast_namespace_body_t* create_namespace_body();
+
+/*
+ *    generator: normal
+ *    namespace_element
+ *        | scope
+ *        | CONST var_declaration
+ *        | var_declaration
+ *        | namespace_definition
+ *        | class_definition
+ *        | func_definition
+ *        | ctor_definition
+ *        | dtor_definition
+ */
+typedef struct _ast_namespace_element_t_ {
+    ast_type_t type;
+    struct _ast_scope_t_* scope;
+    int const_term;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_namespace_definition_t_* namespace_definition;
+    struct _ast_class_definition_t_* class_definition;
+    struct _ast_func_definition_t_* func_definition;
+    struct _ast_ctor_definition_t_* ctor_definition;
+    struct _ast_dtor_definition_t_* dtor_definition;
+} ast_namespace_element_t;
+ast_namespace_element_t* create_namespace_element();
+
+/*
+ *    generator: normal
+ *    class_definition
+ *        | CLASS SYMBOL class_parameters class_block
+ */
+typedef struct _ast_class_definition_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_class_parameters_t_* class_parameters;
+    struct _ast_class_block_t_* class_block;
+} ast_class_definition_t;
+ast_class_definition_t* create_class_definition();
+
+/*
+ *    generator: normal
+ *    class_parameters
+ *        | OPAREN CPAREN
+ *        | OPAREN compound_name CPAREN
+ */
+typedef struct _ast_class_parameters_t_ {
+    ast_type_t type;
+    struct _ast_compound_name_t_* compound_name;
+} ast_class_parameters_t;
+ast_class_parameters_t* create_class_parameters();
+
+/*
+ *    generator: normal
+ *    class_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK class_body CBLOCK
+ */
+typedef struct _ast_class_block_t_ {
+    ast_type_t type;
+    struct _ast_class_body_t_* class_body;
+} ast_class_block_t;
+ast_class_block_t* create_class_block();
+
+/*
+ *    generator: normal
+ *    class_body
+ *        | class_body_element class_body
+ *        | class_body_element
+ */
+typedef struct _ast_class_body_t_ {
+    ast_type_t type;
+    struct _ast_class_body_element_t_* class_body_element;
+    struct _ast_class_body_t_* class_body;
+    struct _ast_class_body_element_t_* class_body_element;
+} ast_class_body_t;
+ast_class_body_t* create_class_body();
+
+/*
+ *    generator: normal
+ *    class_body_element
+ *        | CONST var_declaration
+ *        | var_declaration
+ *        | func_declaration
+ *        | scope
+ */
+typedef struct _ast_class_body_element_t_ {
+    ast_type_t type;
+    int const_term;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_func_declaration_t_* func_declaration;
+    struct _ast_scope_t_* scope;
+} ast_class_body_element_t;
+ast_class_body_element_t* create_class_body_element();
+
+/*
+ *    generator: normal
+ *    var_declaration
+ *        | type_name SYMBOL
+ */
+typedef struct _ast_var_declaration_t_ {
+    ast_type_t type;
+    struct _ast_type_name_t_* type_name;
+    const char* symbol_term;
+} ast_var_declaration_t;
+ast_var_declaration_t* create_var_declaration();
+
+/*
+ *    generator: normal
+ *    var_declaration_list
+ *        | var_declaration COMMA var_declaration_list
+ *        | var_declaration
+ */
+typedef struct _ast_var_declaration_list_t_ {
+    ast_type_t type;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_var_declaration_list_t_* var_declaration_list;
+    struct _ast_var_declaration_t_* var_declaration;
+} ast_var_declaration_list_t;
+ast_var_declaration_list_t* create_var_declaration_list();
+
+/*
+ *    generator: one_keyword
+ *    func_declaration
+ *        | DESTROY
+ *        | CREATE func_decl_parms
+ *        | type_name SYMBOL func_decl_parms
+ */
+typedef struct _ast_func_declaration_t_ {
+    ast_type_t type;
+    struct _ast_func_decl_parms_t_* func_decl_parms;
+    struct _ast_type_name_t_* type_name;
+    const char* symbol_term;
+    struct _ast_func_decl_parms_t_* func_decl_parms;
+} ast_func_declaration_t;
+ast_func_declaration_t* create_func_declaration();
+
+/*
+ *    generator: normal
+ *    func_decl_parms
+ *        | OPAREN CPAREN
+ *        | OPAREN var_declaration_list CPAREN
+ */
+typedef struct _ast_func_decl_parms_t_ {
+    ast_type_t type;
+    struct _ast_var_declaration_list_t_* var_declaration_list;
+} ast_func_decl_parms_t;
+ast_func_decl_parms_t* create_func_decl_parms();
+
+/*
+ *    generator: one_keyword
+ *    bool_literal
+ *        | TRUE
+ *        | FALSE
+ */
+typedef struct _ast_bool_literal_t_ {
+    ast_type_t type;
+    int term_value;
+} ast_bool_literal_t;
+ast_bool_literal_t* create_bool_literal();
+
+/*
+ *    generator: one_nterm
+ *    primary
+ *        | compound_reference
+ *        | const_expression
+ *        | OPAREN expression CPAREN
+ */
+typedef struct _ast_primary_t_ {
+    ast_type_t type;
+    void* nterm_value;
+} ast_primary_t;
+ast_primary_t* create_primary();
+
+/*
+ *    generator: normal
+ *    const_expression
+ *        | FLOAT_CONST
+ *        | INT_CONST
+ *        | UNSIGNED_CONST
+ *        | bool_literal
+ *        | formatted_string
+ */
+typedef struct _ast_const_expression_t_ {
+    ast_type_t type;
+    double float_const_term;
+    int64_t int_const_term;
+    uint64_t unsigned_const_term;
+    struct _ast_bool_literal_t_* bool_literal;
+    struct _ast_formatted_string_t_* formatted_string;
+} ast_const_expression_t;
+ast_const_expression_t* create_const_expression();
+
+/*
+ *    generator: normal
+ *    expression
+ *        | expr_and
+ *        | expr_and OR expression
+ */
+typedef struct _ast_expression_t_ {
+    ast_type_t type;
+    struct _ast_expr_and_t_* expr_and;
+    struct _ast_expr_and_t_* expr_and;
+    int or_term;
+    struct _ast_expression_t_* expression;
+} ast_expression_t;
+ast_expression_t* create_expression();
+
+/*
+ *    generator: normal
+ *    expr_and
+ *        | expr_equ
+ *        | expr_equ AND expr_and
+ */
+typedef struct _ast_expr_and_t_ {
+    ast_type_t type;
+    struct _ast_expr_equ_t_* expr_equ;
+    struct _ast_expr_equ_t_* expr_equ;
+    int and_term;
+    struct _ast_expr_and_t_* expr_and;
+} ast_expr_and_t;
+ast_expr_and_t* create_expr_and();
+
+/*
+ *    generator: normal
+ *    expr_equ
+ *        | expr_compe
+ *        | expr_compe EQU expr_equ
+ *        | expr_compe NEQU expr_equ
+ */
+typedef struct _ast_expr_equ_t_ {
+    ast_type_t type;
+    struct _ast_expr_compe_t_* expr_compe;
+    struct _ast_expr_compe_t_* expr_compe;
+    int equ_term;
+    struct _ast_expr_equ_t_* expr_equ;
+    struct _ast_expr_compe_t_* expr_compe;
+    int nequ_term;
+    struct _ast_expr_equ_t_* expr_equ;
+} ast_expr_equ_t;
+ast_expr_equ_t* create_expr_equ();
+
+/*
+ *    generator: normal
+ *    expr_compe
+ *        | expr_comp
+ *        | expr_comp LORE expr_compe
+ *        | expr_comp GORE expr_compe
+ */
+typedef struct _ast_expr_compe_t_ {
+    ast_type_t type;
+    struct _ast_expr_comp_t_* expr_comp;
+    struct _ast_expr_comp_t_* expr_comp;
+    int lore_term;
+    struct _ast_expr_compe_t_* expr_compe;
+    struct _ast_expr_comp_t_* expr_comp;
+    int gore_term;
+    struct _ast_expr_compe_t_* expr_compe;
+} ast_expr_compe_t;
+ast_expr_compe_t* create_expr_compe();
+
+/*
+ *    generator: normal
+ *    expr_comp
+ *        | expr_term
+ *        | expr_term LESS expr_comp
+ *        | expr_term MORE expr_comp
+ */
+typedef struct _ast_expr_comp_t_ {
+    ast_type_t type;
+    struct _ast_expr_term_t_* expr_term;
+    struct _ast_expr_term_t_* expr_term;
+    int less_term;
+    struct _ast_expr_comp_t_* expr_comp;
+    struct _ast_expr_term_t_* expr_term;
+    int more_term;
+    struct _ast_expr_comp_t_* expr_comp;
+} ast_expr_comp_t;
+ast_expr_comp_t* create_expr_comp();
+
+/*
+ *    generator: normal
+ *    expr_term
+ *        | expr_pow
+ *        | expr_pow ADD expr_term
+ *        | expr_pow SUB expr_term
+ */
+typedef struct _ast_expr_term_t_ {
+    ast_type_t type;
+    struct _ast_expr_pow_t_* expr_pow;
+    struct _ast_expr_pow_t_* expr_pow;
+    int add_term;
+    struct _ast_expr_term_t_* expr_term;
+    struct _ast_expr_pow_t_* expr_pow;
+    int sub_term;
+    struct _ast_expr_term_t_* expr_term;
+} ast_expr_term_t;
+ast_expr_term_t* create_expr_term();
+
+/*
+ *    generator: normal
+ *    expr_pow
+ *        | expr_fact
+ *        | expr_fact POW expr_pow
+ */
+typedef struct _ast_expr_pow_t_ {
+    ast_type_t type;
+    struct _ast_expr_fact_t_* expr_fact;
+    struct _ast_expr_fact_t_* expr_fact;
+    int pow_term;
+    struct _ast_expr_pow_t_* expr_pow;
+} ast_expr_pow_t;
+ast_expr_pow_t* create_expr_pow();
+
+/*
+ *    generator: normal
+ *    expr_fact
+ *        | expr_unary
+ *        | expr_unary MUL expr_fact
+ *        | expr_unary DIV expr_fact
+ *        | expr_unary MOD expr_fact
+ */
+typedef struct _ast_expr_fact_t_ {
+    ast_type_t type;
+    struct _ast_expr_unary_t_* expr_unary;
+    struct _ast_expr_unary_t_* expr_unary;
+    int mul_term;
+    struct _ast_expr_fact_t_* expr_fact;
+    struct _ast_expr_unary_t_* expr_unary;
+    int div_term;
+    struct _ast_expr_fact_t_* expr_fact;
+    struct _ast_expr_unary_t_* expr_unary;
+    int mod_term;
+    struct _ast_expr_fact_t_* expr_fact;
+} ast_expr_fact_t;
+ast_expr_fact_t* create_expr_fact();
+
+/*
+ *    generator: normal
+ *    expr_unary
+ *        | SUB expr_unary
+ *        | ADD expr_unary
+ *        | NOT expr_unary
+ *        | type_name OPAREN expr_unary CPAREN
+ *        | primary
+ */
+typedef struct _ast_expr_unary_t_ {
+    ast_type_t type;
+    int sub_term;
+    struct _ast_expr_unary_t_* expr_unary;
+    int add_term;
+    struct _ast_expr_unary_t_* expr_unary;
+    int not_term;
+    struct _ast_expr_unary_t_* expr_unary;
+    struct _ast_type_name_t_* type_name;
+    struct _ast_expr_unary_t_* expr_unary;
+    struct _ast_primary_t_* primary;
+} ast_expr_unary_t;
+ast_expr_unary_t* create_expr_unary();
+
+/*
+ *    generator: normal
+ *    expr_list
+ *        | expression COMMA expr_list
+ *        | expression
+ */
+typedef struct _ast_expr_list_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+    struct _ast_expr_list_t_* expr_list;
+    struct _ast_expression_t_* expression;
+} ast_expr_list_t;
+ast_expr_list_t* create_expr_list();
+
+/*
+ *    generator: normal
+ *    func_definition
+ *        | var_declaration COLON SYMBOL func_decl_parms func_block
+ */
+typedef struct _ast_func_definition_t_ {
+    ast_type_t type;
+    struct _ast_var_declaration_t_* var_declaration;
+    const char* symbol_term;
+    struct _ast_func_decl_parms_t_* func_decl_parms;
+    struct _ast_func_block_t_* func_block;
+} ast_func_definition_t;
+ast_func_definition_t* create_func_definition();
+
+/*
+ *    generator: normal
+ *    ctor_definition
+ *        | SYMBOL COLON CREATE func_decl_parms func_block
+ */
+typedef struct _ast_ctor_definition_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_func_decl_parms_t_* func_decl_parms;
+    struct _ast_func_block_t_* func_block;
+} ast_ctor_definition_t;
+ast_ctor_definition_t* create_ctor_definition();
+
+/*
+ *    generator: normal
+ *    dtor_definition
+ *        | SYMBOL COLON DESTROY func_block
+ */
+typedef struct _ast_dtor_definition_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+    struct _ast_func_block_t_* func_block;
+} ast_dtor_definition_t;
+ast_dtor_definition_t* create_dtor_definition();
+
+/*
+ *    generator: one_keyword
+ *    assignment_oper
+ *        | ASSIGN
+ *        | ADD_ASSIGN
+ *        | SUB_ASSIGN
+ *        | MUL_ASSIGN
+ *        | DIV_ASSIGN
+ *        | MOD_ASSIGN
+ */
+typedef struct _ast_assignment_oper_t_ {
+    ast_type_t type;
+    int term_value;
+} ast_assignment_oper_t;
+ast_assignment_oper_t* create_assignment_oper();
+
+/*
+ *    generator: normal
+ *    assignment_tail
+ *        | assignment_oper expression
+ */
+typedef struct _ast_assignment_tail_t_ {
+    ast_type_t type;
+    struct _ast_assignment_oper_t_* assignment_oper;
+    struct _ast_expression_t_* expression;
+} ast_assignment_tail_t;
+ast_assignment_tail_t* create_assignment_tail();
+
+/*
+ *    generator: normal
+ *    assignment
+ *        | compound_reference assignment_tail
+ */
+typedef struct _ast_assignment_t_ {
+    ast_type_t type;
+    struct _ast_compound_reference_t_* compound_reference;
+    struct _ast_assignment_tail_t_* assignment_tail;
+} ast_assignment_t;
+ast_assignment_t* create_assignment();
+
+/*
+ *    generator: normal
+ *    data_definition
+ *        | var_declaration assignment_tail
+ *        | var_declaration
+ */
+typedef struct _ast_data_definition_t_ {
+    ast_type_t type;
+    struct _ast_var_declaration_t_* var_declaration;
+    struct _ast_assignment_tail_t_* assignment_tail;
+    struct _ast_var_declaration_t_* var_declaration;
+} ast_data_definition_t;
+ast_data_definition_t* create_data_definition();
+
+/*
+ *    generator: normal
+ *    func_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK func_block_list CBLOCK
+ */
+typedef struct _ast_func_block_t_ {
+    ast_type_t type;
+    struct _ast_func_block_list_t_* func_block_list;
+} ast_func_block_t;
+ast_func_block_t* create_func_block();
+
+/*
+ *    generator: normal
+ *    func_block_list
+ *        | func_block_elem func_block_list
+ *        | func_block_elem
+ */
+typedef struct _ast_func_block_list_t_ {
+    ast_type_t type;
+    struct _ast_func_block_elem_t_* func_block_elem;
+    struct _ast_func_block_list_t_* func_block_list;
+    struct _ast_func_block_elem_t_* func_block_elem;
+} ast_func_block_list_t;
+ast_func_block_list_t* create_func_block_list();
+
+/*
+ *    generator: normal
+ *    func_block_elem
+ *        | break_statement
+ *        | continue_statement
+ *        | inline_statement
+ *        | exit_statement
+ *        | yield_statement
+ *        | return_statement
+ *        | trace_statement
+ *        | raise_statement
+ *        | print_statement
+ *        | data_definition
+ *        | assignment
+ *        | compound_reference
+ *        | while_clause
+ *        | do_clause
+ *        | for_clause
+ *        | try_except_clause
+ *        | switch_case_clause
+ *        | if_else_clause
+ *        | func_block
+ */
+typedef struct _ast_func_block_elem_t_ {
+    ast_type_t type;
+    struct _ast_break_statement_t_* break_statement;
+    struct _ast_continue_statement_t_* continue_statement;
+    struct _ast_inline_statement_t_* inline_statement;
+    struct _ast_exit_statement_t_* exit_statement;
+    struct _ast_yield_statement_t_* yield_statement;
+    struct _ast_return_statement_t_* return_statement;
+    struct _ast_trace_statement_t_* trace_statement;
+    struct _ast_raise_statement_t_* raise_statement;
+    struct _ast_print_statement_t_* print_statement;
+    struct _ast_data_definition_t_* data_definition;
+    struct _ast_assignment_t_* assignment;
+    struct _ast_compound_reference_t_* compound_reference;
+    struct _ast_while_clause_t_* while_clause;
+    struct _ast_do_clause_t_* do_clause;
+    struct _ast_for_clause_t_* for_clause;
+    struct _ast_try_except_clause_t_* try_except_clause;
+    struct _ast_switch_case_clause_t_* switch_case_clause;
+    struct _ast_if_else_clause_t_* if_else_clause;
+    struct _ast_func_block_t_* func_block;
+} ast_func_block_elem_t;
+ast_func_block_elem_t* create_func_block_elem();
+
+/*
+ *    generator: normal
+ *    break_statement
+ *        | BREAK
+ */
+typedef struct _ast_break_statement_t_ {
+    ast_type_t type;
+} ast_break_statement_t;
+ast_break_statement_t* create_break_statement();
+
+/*
+ *    generator: normal
+ *    continue_statement
+ *        | CONTINUE
+ */
+typedef struct _ast_continue_statement_t_ {
+    ast_type_t type;
+} ast_continue_statement_t;
+ast_continue_statement_t* create_continue_statement();
+
+/*
+ *    generator: normal
+ *    inline_statement
+ *        | IBEGIN STRG_CONST IEND
+ */
+typedef struct _ast_inline_statement_t_ {
+    ast_type_t type;
+    const char* strg_const_term;
+} ast_inline_statement_t;
+ast_inline_statement_t* create_inline_statement();
+
+/*
+ *    generator: normal
+ *    exit_statement
+ *        | EXIT OPAREN expression CPAREN
+ */
+typedef struct _ast_exit_statement_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+} ast_exit_statement_t;
+ast_exit_statement_t* create_exit_statement();
+
+/*
+ *    generator: normal
+ *    yield_statement
+ *        | YIELD OPAREN SYMBOL CPAREN
+ */
+typedef struct _ast_yield_statement_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+} ast_yield_statement_t;
+ast_yield_statement_t* create_yield_statement();
+
+/*
+ *    generator: normal
+ *    raise_statement
+ *        | RAISE OPAREN compound_name CPAREN
+ */
+typedef struct _ast_raise_statement_t_ {
+    ast_type_t type;
+    struct _ast_compound_name_t_* compound_name;
+} ast_raise_statement_t;
+ast_raise_statement_t* create_raise_statement();
+
+/*
+ *    generator: normal
+ *    print_statement
+ *        | PRINT
+ *        | PRINT OPAREN CPAREN
+ *        | PRINT OPAREN formatted_string CPAREN
+ */
+typedef struct _ast_print_statement_t_ {
+    ast_type_t type;
+    struct _ast_formatted_string_t_* formatted_string;
+} ast_print_statement_t;
+ast_print_statement_t* create_print_statement();
+
+/*
+ *    generator: normal
+ *    trace_statement
+ *        | TRACE
+ *        | TRACE OPAREN CPAREN
+ *        | TRACE OPAREN formatted_string CPAREN
+ */
+typedef struct _ast_trace_statement_t_ {
+    ast_type_t type;
+    struct _ast_formatted_string_t_* formatted_string;
+} ast_trace_statement_t;
+ast_trace_statement_t* create_trace_statement();
+
+/*
+ *    generator: normal
+ *    return_statement
+ *        | RETURN
+ *        | RETURN OPAREN CPAREN
+ *        | RETURN OPAREN expression CPAREN
+ */
+typedef struct _ast_return_statement_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+} ast_return_statement_t;
+ast_return_statement_t* create_return_statement();
+
+/*
+ *    generator: one_nterm
+ *    if_else_clause
+ *        | if_clause
+ *        | if_clause else_clause_list
+ *        | if_clause else_clause_final
+ *        | if_clause else_clause_list else_clause_final
+ */
+typedef struct _ast_if_else_clause_t_ {
+    ast_type_t type;
+    void* nterm_value;
+} ast_if_else_clause_t;
+ast_if_else_clause_t* create_if_else_clause();
+
+/*
+ *    generator: normal
+ *    if_clause
+ *        | IF OPAREN expression CPAREN func_block
+ */
+typedef struct _ast_if_clause_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+    struct _ast_func_block_t_* func_block;
+} ast_if_clause_t;
+ast_if_clause_t* create_if_clause();
+
+/*
+ *    generator: normal
+ *    else_clause
+ *        | ELSE OPAREN expression CPAREN func_block
+ */
+typedef struct _ast_else_clause_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+    struct _ast_func_block_t_* func_block;
+} ast_else_clause_t;
+ast_else_clause_t* create_else_clause();
+
+/*
+ *    generator: normal
+ *    else_clause_list
+ *        | else_clause
+ *        | else_clause else_clause_list
+ */
+typedef struct _ast_else_clause_list_t_ {
+    ast_type_t type;
+    struct _ast_else_clause_t_* else_clause;
+    struct _ast_else_clause_t_* else_clause;
+    struct _ast_else_clause_list_t_* else_clause_list;
+} ast_else_clause_list_t;
+ast_else_clause_list_t* create_else_clause_list();
+
+/*
+ *    generator: normal
+ *    else_clause_final
+ *        | ELSE OPAREN CPAREN func_block
+ *        | ELSE func_block
+ */
+typedef struct _ast_else_clause_final_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+    struct _ast_func_block_t_* func_block;
+} ast_else_clause_final_t;
+ast_else_clause_final_t* create_else_clause_final();
+
+/*
+ *    generator: normal
+ *    while_clause
+ *        | WHILE OPAREN expression CPAREN func_block
+ */
+typedef struct _ast_while_clause_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+    struct _ast_func_block_t_* func_block;
+} ast_while_clause_t;
+ast_while_clause_t* create_while_clause();
+
+/*
+ *    generator: normal
+ *    do_clause
+ *        | DO func_block WHILE OPAREN expression CPAREN
+ */
+typedef struct _ast_do_clause_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+    struct _ast_expression_t_* expression;
+} ast_do_clause_t;
+ast_do_clause_t* create_do_clause();
+
+/*
+ *    generator: normal
+ *    for_entry
+ *        | FOR OPAREN SYMBOL IN
+ */
+typedef struct _ast_for_entry_t_ {
+    ast_type_t type;
+    const char* symbol_term;
+} ast_for_entry_t;
+ast_for_entry_t* create_for_entry();
+
+/*
+ *    generator: normal
+ *    for_clause
+ *        | for_entry compound_reference CPAREN func_block
+ *        | for_entry expression TO expression CPAREN func_block
+ */
+typedef struct _ast_for_clause_t_ {
+    ast_type_t type;
+    struct _ast_for_entry_t_* for_entry;
+    struct _ast_compound_reference_t_* compound_reference;
+    struct _ast_func_block_t_* func_block;
+    struct _ast_for_entry_t_* for_entry;
+    struct _ast_expression_t_* expression;
+    struct _ast_expression_t_* expression;
+    struct _ast_func_block_t_* func_block;
+} ast_for_clause_t;
+ast_for_clause_t* create_for_clause();
+
+/*
+ *    generator: normal
+ *    switch_case_clause
+ *        | switch_clause case_clause_list case_clause_final
+ */
+typedef struct _ast_switch_case_clause_t_ {
+    ast_type_t type;
+    struct _ast_switch_clause_t_* switch_clause;
+    struct _ast_case_clause_list_t_* case_clause_list;
+    struct _ast_case_clause_final_t_* case_clause_final;
+} ast_switch_case_clause_t;
+ast_switch_case_clause_t* create_switch_case_clause();
+
+/*
+ *    generator: normal
+ *    switch_clause
+ *        | SWITCH OPAREN expression CPAREN OBLOCK
+ */
+typedef struct _ast_switch_clause_t_ {
+    ast_type_t type;
+    struct _ast_expression_t_* expression;
+} ast_switch_clause_t;
+ast_switch_clause_t* create_switch_clause();
+
+/*
+ *    generator: normal
+ *    case_clause
+ *        | CASE OPAREN const_expression CPAREN func_block
+ */
+typedef struct _ast_case_clause_t_ {
+    ast_type_t type;
+    struct _ast_const_expression_t_* const_expression;
+    struct _ast_func_block_t_* func_block;
+} ast_case_clause_t;
+ast_case_clause_t* create_case_clause();
+
+/*
+ *    generator: normal
+ *    case_clause_list
+ *        | case_clause case_clause_list
+ *        | case_clause
+ */
+typedef struct _ast_case_clause_list_t_ {
+    ast_type_t type;
+    struct _ast_case_clause_t_* case_clause;
+    struct _ast_case_clause_list_t_* case_clause_list;
+    struct _ast_case_clause_t_* case_clause;
+} ast_case_clause_list_t;
+ast_case_clause_list_t* create_case_clause_list();
+
+/*
+ *    generator: normal
+ *    case_clause_final
+ *        | CBLOCK
+ *        | DEFAULT func_block CBLOCK
+ */
+typedef struct _ast_case_clause_final_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+} ast_case_clause_final_t;
+ast_case_clause_final_t* create_case_clause_final();
+
+/*
+ *    generator: normal
+ *    try_except_clause
+ *        | try_clause except_clause_list
+ *        | try_clause except_clause_final
+ *        | try_clause except_clause_list except_clause_final
+ */
+typedef struct _ast_try_except_clause_t_ {
+    ast_type_t type;
+    struct _ast_try_clause_t_* try_clause;
+    struct _ast_except_clause_list_t_* except_clause_list;
+    struct _ast_try_clause_t_* try_clause;
+    struct _ast_except_clause_final_t_* except_clause_final;
+    struct _ast_try_clause_t_* try_clause;
+    struct _ast_except_clause_list_t_* except_clause_list;
+    struct _ast_except_clause_final_t_* except_clause_final;
+} ast_try_except_clause_t;
+ast_try_except_clause_t* create_try_except_clause();
+
+/*
+ *    generator: normal
+ *    try_clause
+ *        | TRY func_block
+ */
+typedef struct _ast_try_clause_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+} ast_try_clause_t;
+ast_try_clause_t* create_try_clause();
+
+/*
+ *    generator: normal
+ *    except_clause
+ *        | EXCEPT OPAREN compound_name CPAREN AS SYMBOL func_block
+ */
+typedef struct _ast_except_clause_t_ {
+    ast_type_t type;
+    struct _ast_compound_name_t_* compound_name;
+    const char* symbol_term;
+    struct _ast_func_block_t_* func_block;
+} ast_except_clause_t;
+ast_except_clause_t* create_except_clause();
+
+/*
+ *    generator: normal
+ *    except_clause_list
+ *        | except_clause except_clause_list
+ *        | except_clause
+ */
+typedef struct _ast_except_clause_list_t_ {
+    ast_type_t type;
+    struct _ast_except_clause_t_* except_clause;
+    struct _ast_except_clause_list_t_* except_clause_list;
+    struct _ast_except_clause_t_* except_clause;
+} ast_except_clause_list_t;
+ast_except_clause_list_t* create_except_clause_list();
+
+/*
+ *    generator: normal
+ *    except_clause_final
+ *        | EXCEPT OPAREN CPAREN func_block
+ *        | EXCEPT func_block
+ */
+typedef struct _ast_except_clause_final_t_ {
+    ast_type_t type;
+    struct _ast_func_block_t_* func_block;
+    struct _ast_func_block_t_* func_block;
+} ast_except_clause_final_t;
+ast_except_clause_final_t* create_except_clause_final();
+
+#endif /* _AST_H */
+

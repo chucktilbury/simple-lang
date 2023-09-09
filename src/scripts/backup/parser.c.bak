@@ -1,0 +1,2454 @@
+/*
+  this file is generated.
+  --- DO NOT EDIT ---
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "ast.h"
+#include "tokens.h"
+#include "scanner.h"
+#include "parser.h"
+#include "mem.h"
+
+/*
+ *    generator: normal
+ *    module
+ *        | MODULE SYMBOL COLON module_type module_body
+ */
+ast_module_t* parse_module(parser_state_t* state) {
+
+    ast_module_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // MODULE is a terminal = True
+        // SYMBOL is a terminal = True
+        // COLON is a terminal = True
+        // module_type is a terminal = False
+        // module_body is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    module_type
+ *        | EXEC
+ *        | STATIC
+ *        | DYNAMIC
+ */
+ast_module_type_t* parse_module_type(parser_state_t* state) {
+
+    ast_module_type_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // EXEC is a terminal = True
+    }
+    else if(state->match == false) {
+        // STATIC is a terminal = True
+    }
+    else if(state->match == false) {
+        // DYNAMIC is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    module_body
+ *        | OBLOCK module_body_list CBLOCK
+ */
+ast_module_body_t* parse_module_body(parser_state_t* state) {
+
+    ast_module_body_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // module_body_list is a terminal = False
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_nterm
+ *    module_element
+ *        | namespace_element
+ *        | import_statement
+ *        | entry_definition
+ */
+ast_module_element_t* parse_module_element(parser_state_t* state) {
+
+    ast_module_element_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // namespace_element is a terminal = False
+    }
+    else if(state->match == false) {
+        // import_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // entry_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    module_body_list
+ *        | module_element module_body_list
+ *        | module_element
+ */
+ast_module_body_list_t* parse_module_body_list(parser_state_t* state) {
+
+    ast_module_body_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // module_element is a terminal = False
+        // module_body_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // module_element is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_nterm
+ *    import_statement
+ *        | IMPORT compound_name
+ *        | IMPORT compound_name AS SYMBOL
+ */
+ast_import_statement_t* parse_import_statement(parser_state_t* state) {
+
+    ast_import_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // IMPORT is a terminal = True
+        // compound_name is a terminal = False
+    }
+    else if(state->match == false) {
+        // IMPORT is a terminal = True
+        // compound_name is a terminal = False
+        // AS is a terminal = True
+        // SYMBOL is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    entry_definition
+ *        | ENTRY func_block
+ */
+ast_entry_definition_t* parse_entry_definition(parser_state_t* state) {
+
+    ast_entry_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // ENTRY is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    scope
+ *        | PUBLIC
+ *        | PRIVATE
+ *        | PROTECTED
+ */
+ast_scope_t* parse_scope(parser_state_t* state) {
+
+    ast_scope_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // PUBLIC is a terminal = True
+    }
+    else if(state->match == false) {
+        // PRIVATE is a terminal = True
+    }
+    else if(state->match == false) {
+        // PROTECTED is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    type_name
+ *        | FLOAT
+ *        | INTEGER
+ *        | UNSIGNED
+ *        | STRING
+ *        | DICT
+ *        | LIST
+ *        | BOOLEAN
+ *        | NOTHING
+ *        | compound_name
+ */
+ast_type_name_t* parse_type_name(parser_state_t* state) {
+
+    ast_type_name_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // FLOAT is a terminal = True
+    }
+    else if(state->match == false) {
+        // INTEGER is a terminal = True
+    }
+    else if(state->match == false) {
+        // UNSIGNED is a terminal = True
+    }
+    else if(state->match == false) {
+        // STRING is a terminal = True
+    }
+    else if(state->match == false) {
+        // DICT is a terminal = True
+    }
+    else if(state->match == false) {
+        // LIST is a terminal = True
+    }
+    else if(state->match == false) {
+        // BOOLEAN is a terminal = True
+    }
+    else if(state->match == false) {
+        // NOTHING is a terminal = True
+    }
+    else if(state->match == false) {
+        // compound_name is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    compound_reference
+ *        | compound_reference_element DOT compound_reference
+ *        | compound_reference_element
+ */
+ast_compound_reference_t* parse_compound_reference(parser_state_t* state) {
+
+    ast_compound_reference_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // compound_reference_element is a terminal = False
+        // DOT is a terminal = True
+        // compound_reference is a terminal = False
+    }
+    else if(state->match == false) {
+        // compound_reference_element is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_nterm
+ *    compound_reference_element
+ *        | compound_name
+ *        | func_reference
+ *        | array_reference
+ */
+ast_compound_reference_element_t* parse_compound_reference_element(parser_state_t* state) {
+
+    ast_compound_reference_element_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // compound_name is a terminal = False
+    }
+    else if(state->match == false) {
+        // func_reference is a terminal = False
+    }
+    else if(state->match == false) {
+        // array_reference is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_construct
+ *    compound_name
+ *        | SYMBOL DOT compound_name
+ *        | SYMBOL
+ */
+ast_compound_name_t* parse_compound_name(parser_state_t* state) {
+
+    ast_compound_name_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // DOT is a terminal = True
+        // compound_name is a terminal = False
+    }
+    else if(state->match == false) {
+        // SYMBOL is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_construct
+ *    formatted_string
+ *        | STRG_CONST
+ *        | STRG_CONST OPAREN CPAREN
+ *        | STRG_CONST OPAREN expr_list CPAREN
+ */
+ast_formatted_string_t* parse_formatted_string(parser_state_t* state) {
+
+    ast_formatted_string_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // STRG_CONST is a terminal = True
+    }
+    else if(state->match == false) {
+        // STRG_CONST is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // STRG_CONST is a terminal = True
+        // OPAREN is a terminal = True
+        // expr_list is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_construct
+ *    func_reference
+ *        | SYMBOL OPAREN CPAREN
+ *        | SYMBOL OPAREN expr_list CPAREN
+ */
+ast_func_reference_t* parse_func_reference(parser_state_t* state) {
+
+    ast_func_reference_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // OPAREN is a terminal = True
+        // expr_list is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    array_reference
+ *        | SYMBOL array_reference_list
+ */
+ast_array_reference_t* parse_array_reference(parser_state_t* state) {
+
+    ast_array_reference_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // array_reference_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    array_brace
+ *        | OBRACE expression CBRACE
+ */
+ast_array_brace_t* parse_array_brace(parser_state_t* state) {
+
+    ast_array_brace_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OBRACE is a terminal = True
+        // expression is a terminal = False
+        // CBRACE is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    array_reference_list
+ *        | array_brace array_reference_list
+ *        | array_brace
+ */
+ast_array_reference_list_t* parse_array_reference_list(parser_state_t* state) {
+
+    ast_array_reference_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // array_brace is a terminal = False
+        // array_reference_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // array_brace is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    namespace_definition
+ *        | NAMESPACE SYMBOL namespace_block
+ */
+ast_namespace_definition_t* parse_namespace_definition(parser_state_t* state) {
+
+    ast_namespace_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // NAMESPACE is a terminal = True
+        // SYMBOL is a terminal = True
+        // namespace_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    namespace_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK namespace_body CBLOCK
+ */
+ast_namespace_block_t* parse_namespace_block(parser_state_t* state) {
+
+    ast_namespace_block_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // namespace_body is a terminal = False
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    namespace_body
+ *        | namespace_element namespace_block
+ *        | namespace_element
+ */
+ast_namespace_body_t* parse_namespace_body(parser_state_t* state) {
+
+    ast_namespace_body_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // namespace_element is a terminal = False
+        // namespace_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // namespace_element is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    namespace_element
+ *        | scope
+ *        | CONST var_declaration
+ *        | var_declaration
+ *        | namespace_definition
+ *        | class_definition
+ *        | func_definition
+ *        | ctor_definition
+ *        | dtor_definition
+ */
+ast_namespace_element_t* parse_namespace_element(parser_state_t* state) {
+
+    ast_namespace_element_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // scope is a terminal = False
+    }
+    else if(state->match == false) {
+        // CONST is a terminal = True
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // namespace_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // class_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // func_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // ctor_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // dtor_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    class_definition
+ *        | CLASS SYMBOL class_parameters class_block
+ */
+ast_class_definition_t* parse_class_definition(parser_state_t* state) {
+
+    ast_class_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // CLASS is a terminal = True
+        // SYMBOL is a terminal = True
+        // class_parameters is a terminal = False
+        // class_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    class_parameters
+ *        | OPAREN CPAREN
+ *        | OPAREN compound_name CPAREN
+ */
+ast_class_parameters_t* parse_class_parameters(parser_state_t* state) {
+
+    ast_class_parameters_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // OPAREN is a terminal = True
+        // compound_name is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    class_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK class_body CBLOCK
+ */
+ast_class_block_t* parse_class_block(parser_state_t* state) {
+
+    ast_class_block_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // class_body is a terminal = False
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    class_body
+ *        | class_body_element class_body
+ *        | class_body_element
+ */
+ast_class_body_t* parse_class_body(parser_state_t* state) {
+
+    ast_class_body_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // class_body_element is a terminal = False
+        // class_body is a terminal = False
+    }
+    else if(state->match == false) {
+        // class_body_element is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    class_body_element
+ *        | CONST var_declaration
+ *        | var_declaration
+ *        | func_declaration
+ *        | scope
+ */
+ast_class_body_element_t* parse_class_body_element(parser_state_t* state) {
+
+    ast_class_body_element_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // CONST is a terminal = True
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // func_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // scope is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    var_declaration
+ *        | type_name SYMBOL
+ */
+ast_var_declaration_t* parse_var_declaration(parser_state_t* state) {
+
+    ast_var_declaration_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // type_name is a terminal = False
+        // SYMBOL is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    var_declaration_list
+ *        | var_declaration COMMA var_declaration_list
+ *        | var_declaration
+ */
+ast_var_declaration_list_t* parse_var_declaration_list(parser_state_t* state) {
+
+    ast_var_declaration_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // var_declaration is a terminal = False
+        // COMMA is a terminal = True
+        // var_declaration_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    func_declaration
+ *        | DESTROY
+ *        | CREATE func_decl_parms
+ *        | type_name SYMBOL func_decl_parms
+ */
+ast_func_declaration_t* parse_func_declaration(parser_state_t* state) {
+
+    ast_func_declaration_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // DESTROY is a terminal = True
+    }
+    else if(state->match == false) {
+        // CREATE is a terminal = True
+        // func_decl_parms is a terminal = False
+    }
+    else if(state->match == false) {
+        // type_name is a terminal = False
+        // SYMBOL is a terminal = True
+        // func_decl_parms is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    func_decl_parms
+ *        | OPAREN CPAREN
+ *        | OPAREN var_declaration_list CPAREN
+ */
+ast_func_decl_parms_t* parse_func_decl_parms(parser_state_t* state) {
+
+    ast_func_decl_parms_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // OPAREN is a terminal = True
+        // var_declaration_list is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    bool_literal
+ *        | TRUE
+ *        | FALSE
+ */
+ast_bool_literal_t* parse_bool_literal(parser_state_t* state) {
+
+    ast_bool_literal_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // TRUE is a terminal = True
+    }
+    else if(state->match == false) {
+        // FALSE is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_nterm
+ *    primary
+ *        | compound_reference
+ *        | const_expression
+ *        | OPAREN expression CPAREN
+ */
+ast_primary_t* parse_primary(parser_state_t* state) {
+
+    ast_primary_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // compound_reference is a terminal = False
+    }
+    else if(state->match == false) {
+        // const_expression is a terminal = False
+    }
+    else if(state->match == false) {
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    const_expression
+ *        | FLOAT_CONST
+ *        | INT_CONST
+ *        | UNSIGNED_CONST
+ *        | bool_literal
+ *        | formatted_string
+ */
+ast_const_expression_t* parse_const_expression(parser_state_t* state) {
+
+    ast_const_expression_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // FLOAT_CONST is a terminal = True
+    }
+    else if(state->match == false) {
+        // INT_CONST is a terminal = True
+    }
+    else if(state->match == false) {
+        // UNSIGNED_CONST is a terminal = True
+    }
+    else if(state->match == false) {
+        // bool_literal is a terminal = False
+    }
+    else if(state->match == false) {
+        // formatted_string is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expression
+ *        | expr_and
+ *        | expr_and OR expression
+ */
+ast_expression_t* parse_expression(parser_state_t* state) {
+
+    ast_expression_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_and is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_and is a terminal = False
+        // OR is a terminal = True
+        // expression is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_and
+ *        | expr_equ
+ *        | expr_equ AND expr_and
+ */
+ast_expr_and_t* parse_expr_and(parser_state_t* state) {
+
+    ast_expr_and_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_equ is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_equ is a terminal = False
+        // AND is a terminal = True
+        // expr_and is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_equ
+ *        | expr_compe
+ *        | expr_compe EQU expr_equ
+ *        | expr_compe NEQU expr_equ
+ */
+ast_expr_equ_t* parse_expr_equ(parser_state_t* state) {
+
+    ast_expr_equ_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_compe is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_compe is a terminal = False
+        // EQU is a terminal = True
+        // expr_equ is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_compe is a terminal = False
+        // NEQU is a terminal = True
+        // expr_equ is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_compe
+ *        | expr_comp
+ *        | expr_comp LORE expr_compe
+ *        | expr_comp GORE expr_compe
+ */
+ast_expr_compe_t* parse_expr_compe(parser_state_t* state) {
+
+    ast_expr_compe_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_comp is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_comp is a terminal = False
+        // LORE is a terminal = True
+        // expr_compe is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_comp is a terminal = False
+        // GORE is a terminal = True
+        // expr_compe is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_comp
+ *        | expr_term
+ *        | expr_term LESS expr_comp
+ *        | expr_term MORE expr_comp
+ */
+ast_expr_comp_t* parse_expr_comp(parser_state_t* state) {
+
+    ast_expr_comp_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_term is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_term is a terminal = False
+        // LESS is a terminal = True
+        // expr_comp is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_term is a terminal = False
+        // MORE is a terminal = True
+        // expr_comp is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_term
+ *        | expr_pow
+ *        | expr_pow ADD expr_term
+ *        | expr_pow SUB expr_term
+ */
+ast_expr_term_t* parse_expr_term(parser_state_t* state) {
+
+    ast_expr_term_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_pow is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_pow is a terminal = False
+        // ADD is a terminal = True
+        // expr_term is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_pow is a terminal = False
+        // SUB is a terminal = True
+        // expr_term is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_pow
+ *        | expr_fact
+ *        | expr_fact POW expr_pow
+ */
+ast_expr_pow_t* parse_expr_pow(parser_state_t* state) {
+
+    ast_expr_pow_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_fact is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_fact is a terminal = False
+        // POW is a terminal = True
+        // expr_pow is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_fact
+ *        | expr_unary
+ *        | expr_unary MUL expr_fact
+ *        | expr_unary DIV expr_fact
+ *        | expr_unary MOD expr_fact
+ */
+ast_expr_fact_t* parse_expr_fact(parser_state_t* state) {
+
+    ast_expr_fact_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expr_unary is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_unary is a terminal = False
+        // MUL is a terminal = True
+        // expr_fact is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_unary is a terminal = False
+        // DIV is a terminal = True
+        // expr_fact is a terminal = False
+    }
+    else if(state->match == false) {
+        // expr_unary is a terminal = False
+        // MOD is a terminal = True
+        // expr_fact is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_unary
+ *        | SUB expr_unary
+ *        | ADD expr_unary
+ *        | NOT expr_unary
+ *        | type_name OPAREN expr_unary CPAREN
+ *        | primary
+ */
+ast_expr_unary_t* parse_expr_unary(parser_state_t* state) {
+
+    ast_expr_unary_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SUB is a terminal = True
+        // expr_unary is a terminal = False
+    }
+    else if(state->match == false) {
+        // ADD is a terminal = True
+        // expr_unary is a terminal = False
+    }
+    else if(state->match == false) {
+        // NOT is a terminal = True
+        // expr_unary is a terminal = False
+    }
+    else if(state->match == false) {
+        // type_name is a terminal = False
+        // OPAREN is a terminal = True
+        // expr_unary is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // primary is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    expr_list
+ *        | expression COMMA expr_list
+ *        | expression
+ */
+ast_expr_list_t* parse_expr_list(parser_state_t* state) {
+
+    ast_expr_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // expression is a terminal = False
+        // COMMA is a terminal = True
+        // expr_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // expression is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    func_definition
+ *        | var_declaration COLON SYMBOL func_decl_parms func_block
+ */
+ast_func_definition_t* parse_func_definition(parser_state_t* state) {
+
+    ast_func_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // var_declaration is a terminal = False
+        // COLON is a terminal = True
+        // SYMBOL is a terminal = True
+        // func_decl_parms is a terminal = False
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    ctor_definition
+ *        | SYMBOL COLON CREATE func_decl_parms func_block
+ */
+ast_ctor_definition_t* parse_ctor_definition(parser_state_t* state) {
+
+    ast_ctor_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // COLON is a terminal = True
+        // CREATE is a terminal = True
+        // func_decl_parms is a terminal = False
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    dtor_definition
+ *        | SYMBOL COLON DESTROY func_block
+ */
+ast_dtor_definition_t* parse_dtor_definition(parser_state_t* state) {
+
+    ast_dtor_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SYMBOL is a terminal = True
+        // COLON is a terminal = True
+        // DESTROY is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: one_keyword
+ *    assignment_oper
+ *        | ASSIGN
+ *        | ADD_ASSIGN
+ *        | SUB_ASSIGN
+ *        | MUL_ASSIGN
+ *        | DIV_ASSIGN
+ *        | MOD_ASSIGN
+ */
+ast_assignment_oper_t* parse_assignment_oper(parser_state_t* state) {
+
+    ast_assignment_oper_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // ADD_ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // SUB_ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // MUL_ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // DIV_ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // MOD_ASSIGN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    assignment_tail
+ *        | assignment_oper expression
+ */
+ast_assignment_tail_t* parse_assignment_tail(parser_state_t* state) {
+
+    ast_assignment_tail_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // assignment_oper is a terminal = False
+        // expression is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    assignment
+ *        | compound_reference assignment_tail
+ */
+ast_assignment_t* parse_assignment(parser_state_t* state) {
+
+    ast_assignment_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // compound_reference is a terminal = False
+        // assignment_tail is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    data_definition
+ *        | var_declaration assignment_tail
+ *        | var_declaration
+ */
+ast_data_definition_t* parse_data_definition(parser_state_t* state) {
+
+    ast_data_definition_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // var_declaration is a terminal = False
+        // assignment_tail is a terminal = False
+    }
+    else if(state->match == false) {
+        // var_declaration is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    func_block
+ *        | OBLOCK CBLOCK
+ *        | OBLOCK func_block_list CBLOCK
+ */
+ast_func_block_t* parse_func_block(parser_state_t* state) {
+
+    ast_func_block_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // OBLOCK is a terminal = True
+        // func_block_list is a terminal = False
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    func_block_list
+ *        | func_block_elem func_block_list
+ *        | func_block_elem
+ */
+ast_func_block_list_t* parse_func_block_list(parser_state_t* state) {
+
+    ast_func_block_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // func_block_elem is a terminal = False
+        // func_block_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // func_block_elem is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    func_block_elem
+ *        | break_statement
+ *        | continue_statement
+ *        | inline_statement
+ *        | exit_statement
+ *        | yield_statement
+ *        | return_statement
+ *        | trace_statement
+ *        | raise_statement
+ *        | print_statement
+ *        | data_definition
+ *        | assignment
+ *        | compound_reference
+ *        | while_clause
+ *        | do_clause
+ *        | for_clause
+ *        | try_except_clause
+ *        | switch_case_clause
+ *        | if_else_clause
+ *        | func_block
+ */
+ast_func_block_elem_t* parse_func_block_elem(parser_state_t* state) {
+
+    ast_func_block_elem_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // break_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // continue_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // inline_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // exit_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // yield_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // return_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // trace_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // raise_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // print_statement is a terminal = False
+    }
+    else if(state->match == false) {
+        // data_definition is a terminal = False
+    }
+    else if(state->match == false) {
+        // assignment is a terminal = False
+    }
+    else if(state->match == false) {
+        // compound_reference is a terminal = False
+    }
+    else if(state->match == false) {
+        // while_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // do_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // for_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // try_except_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // switch_case_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // if_else_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    break_statement
+ *        | BREAK
+ */
+ast_break_statement_t* parse_break_statement(parser_state_t* state) {
+
+    ast_break_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // BREAK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    continue_statement
+ *        | CONTINUE
+ */
+ast_continue_statement_t* parse_continue_statement(parser_state_t* state) {
+
+    ast_continue_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // CONTINUE is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    inline_statement
+ *        | IBEGIN STRG_CONST IEND
+ */
+ast_inline_statement_t* parse_inline_statement(parser_state_t* state) {
+
+    ast_inline_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // IBEGIN is a terminal = True
+        // STRG_CONST is a terminal = True
+        // IEND is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    exit_statement
+ *        | EXIT OPAREN expression CPAREN
+ */
+ast_exit_statement_t* parse_exit_statement(parser_state_t* state) {
+
+    ast_exit_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // EXIT is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    yield_statement
+ *        | YIELD OPAREN SYMBOL CPAREN
+ */
+ast_yield_statement_t* parse_yield_statement(parser_state_t* state) {
+
+    ast_yield_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // YIELD is a terminal = True
+        // OPAREN is a terminal = True
+        // SYMBOL is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    raise_statement
+ *        | RAISE OPAREN compound_name CPAREN
+ */
+ast_raise_statement_t* parse_raise_statement(parser_state_t* state) {
+
+    ast_raise_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // RAISE is a terminal = True
+        // OPAREN is a terminal = True
+        // compound_name is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    print_statement
+ *        | PRINT
+ *        | PRINT OPAREN CPAREN
+ *        | PRINT OPAREN formatted_string CPAREN
+ */
+ast_print_statement_t* parse_print_statement(parser_state_t* state) {
+
+    ast_print_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // PRINT is a terminal = True
+    }
+    else if(state->match == false) {
+        // PRINT is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // PRINT is a terminal = True
+        // OPAREN is a terminal = True
+        // formatted_string is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    trace_statement
+ *        | TRACE
+ *        | TRACE OPAREN CPAREN
+ *        | TRACE OPAREN formatted_string CPAREN
+ */
+ast_trace_statement_t* parse_trace_statement(parser_state_t* state) {
+
+    ast_trace_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // TRACE is a terminal = True
+    }
+    else if(state->match == false) {
+        // TRACE is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // TRACE is a terminal = True
+        // OPAREN is a terminal = True
+        // formatted_string is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    return_statement
+ *        | RETURN
+ *        | RETURN OPAREN CPAREN
+ *        | RETURN OPAREN expression CPAREN
+ */
+ast_return_statement_t* parse_return_statement(parser_state_t* state) {
+
+    ast_return_statement_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // RETURN is a terminal = True
+    }
+    else if(state->match == false) {
+        // RETURN is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // RETURN is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    if_else_clause
+ *        | if_clause
+ *        | if_clause else_clause_list
+ *        | if_clause else_clause_final
+ *        | if_clause else_clause_list else_clause_final
+ */
+ast_if_else_clause_t* parse_if_else_clause(parser_state_t* state) {
+
+    ast_if_else_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // if_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // if_clause is a terminal = False
+        // else_clause_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // if_clause is a terminal = False
+        // else_clause_final is a terminal = False
+    }
+    else if(state->match == false) {
+        // if_clause is a terminal = False
+        // else_clause_list is a terminal = False
+        // else_clause_final is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    if_clause
+ *        | IF OPAREN expression CPAREN func_block
+ */
+ast_if_clause_t* parse_if_clause(parser_state_t* state) {
+
+    ast_if_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // IF is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    else_clause
+ *        | ELSE OPAREN expression CPAREN func_block
+ */
+ast_else_clause_t* parse_else_clause(parser_state_t* state) {
+
+    ast_else_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // ELSE is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    else_clause_list
+ *        | else_clause
+ *        | else_clause else_clause_list
+ */
+ast_else_clause_list_t* parse_else_clause_list(parser_state_t* state) {
+
+    ast_else_clause_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // else_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // else_clause is a terminal = False
+        // else_clause_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    else_clause_final
+ *        | ELSE OPAREN CPAREN func_block
+ *        | ELSE func_block
+ */
+ast_else_clause_final_t* parse_else_clause_final(parser_state_t* state) {
+
+    ast_else_clause_final_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // ELSE is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // ELSE is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    while_clause
+ *        | WHILE OPAREN expression CPAREN func_block
+ */
+ast_while_clause_t* parse_while_clause(parser_state_t* state) {
+
+    ast_while_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // WHILE is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    do_clause
+ *        | DO func_block WHILE OPAREN expression CPAREN
+ */
+ast_do_clause_t* parse_do_clause(parser_state_t* state) {
+
+    ast_do_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // DO is a terminal = True
+        // func_block is a terminal = False
+        // WHILE is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    for_entry
+ *        | FOR OPAREN SYMBOL IN
+ */
+ast_for_entry_t* parse_for_entry(parser_state_t* state) {
+
+    ast_for_entry_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // FOR is a terminal = True
+        // OPAREN is a terminal = True
+        // SYMBOL is a terminal = True
+        // IN is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    for_clause
+ *        | for_entry compound_reference CPAREN func_block
+ *        | for_entry expression TO expression CPAREN func_block
+ */
+ast_for_clause_t* parse_for_clause(parser_state_t* state) {
+
+    ast_for_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // for_entry is a terminal = False
+        // compound_reference is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // for_entry is a terminal = False
+        // expression is a terminal = False
+        // TO is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    switch_case_clause
+ *        | switch_clause case_clause_list case_clause_final
+ */
+ast_switch_case_clause_t* parse_switch_case_clause(parser_state_t* state) {
+
+    ast_switch_case_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // switch_clause is a terminal = False
+        // case_clause_list is a terminal = False
+        // case_clause_final is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    switch_clause
+ *        | SWITCH OPAREN expression CPAREN OBLOCK
+ */
+ast_switch_clause_t* parse_switch_clause(parser_state_t* state) {
+
+    ast_switch_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // SWITCH is a terminal = True
+        // OPAREN is a terminal = True
+        // expression is a terminal = False
+        // CPAREN is a terminal = True
+        // OBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    case_clause
+ *        | CASE OPAREN const_expression CPAREN func_block
+ */
+ast_case_clause_t* parse_case_clause(parser_state_t* state) {
+
+    ast_case_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // CASE is a terminal = True
+        // OPAREN is a terminal = True
+        // const_expression is a terminal = False
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    case_clause_list
+ *        | case_clause case_clause_list
+ *        | case_clause
+ */
+ast_case_clause_list_t* parse_case_clause_list(parser_state_t* state) {
+
+    ast_case_clause_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // case_clause is a terminal = False
+        // case_clause_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // case_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    case_clause_final
+ *        | CBLOCK
+ *        | DEFAULT func_block CBLOCK
+ */
+ast_case_clause_final_t* parse_case_clause_final(parser_state_t* state) {
+
+    ast_case_clause_final_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // DEFAULT is a terminal = True
+        // func_block is a terminal = False
+        // CBLOCK is a terminal = True
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    try_except_clause
+ *        | try_clause except_clause_list
+ *        | try_clause except_clause_final
+ *        | try_clause except_clause_list except_clause_final
+ */
+ast_try_except_clause_t* parse_try_except_clause(parser_state_t* state) {
+
+    ast_try_except_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // try_clause is a terminal = False
+        // except_clause_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // try_clause is a terminal = False
+        // except_clause_final is a terminal = False
+    }
+    else if(state->match == false) {
+        // try_clause is a terminal = False
+        // except_clause_list is a terminal = False
+        // except_clause_final is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    try_clause
+ *        | TRY func_block
+ */
+ast_try_clause_t* parse_try_clause(parser_state_t* state) {
+
+    ast_try_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // TRY is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    except_clause
+ *        | EXCEPT OPAREN compound_name CPAREN AS SYMBOL func_block
+ */
+ast_except_clause_t* parse_except_clause(parser_state_t* state) {
+
+    ast_except_clause_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // EXCEPT is a terminal = True
+        // OPAREN is a terminal = True
+        // compound_name is a terminal = False
+        // CPAREN is a terminal = True
+        // AS is a terminal = True
+        // SYMBOL is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    except_clause_list
+ *        | except_clause except_clause_list
+ *        | except_clause
+ */
+ast_except_clause_list_t* parse_except_clause_list(parser_state_t* state) {
+
+    ast_except_clause_list_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // except_clause is a terminal = False
+        // except_clause_list is a terminal = False
+    }
+    else if(state->match == false) {
+        // except_clause is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+
+/*
+ *    generator: normal
+ *    except_clause_final
+ *        | EXCEPT OPAREN CPAREN func_block
+ *        | EXCEPT func_block
+ */
+ast_except_clause_final_t* parse_except_clause_final(parser_state_t* state) {
+
+    ast_except_clause_final_t* ptr = NULL;
+    state->match = false;
+
+    if(state->match == false) {
+        // EXCEPT is a terminal = True
+        // OPAREN is a terminal = True
+        // CPAREN is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // EXCEPT is a terminal = True
+        // func_block is a terminal = False
+    }
+    else if(state->match == false) {
+        // flag a syntax error
+    }
+    else {
+        // save the production and allocate the AST
+    }
+    return ptr;
+}
+

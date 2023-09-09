@@ -4,10 +4,9 @@
 # written in a way that tries to make sense for an auto-generated recursive
 # decent parser. The idea is a create a parser as simply as possible.
 
-%tokens
-
-# defined name, recognized name, friendly name.
-# keywords are sorted by gen_parser by defined name.
+# These keywords are used by the scanner to distinguish between identifiers.
+# The format of this section is:
+# enmum name, scanner name, error name
 %keywords
 NAMESPACE, "namespace", "namespace keyword"
 CLASS, "class", "class keyword"
@@ -59,58 +58,97 @@ OR, "or", "or operator"
 AND, "and", "and operator"
 NOT, "not", "not operator"
 CONST, "const", "const keyword"
-%keywords
+%end
 
+
+# These are not used by the scanner, but the tokens still need to be defined.
+# The format of this section is
+# enum name error name
+# These names are separated by a single space. Operators are always stored in
+# the AST data structure.
 %operators
-ADD, "+", "+"
-SUB, "-", "-"
-MUL, "*", "*"
-DIV, "/", "/"
-MOD, "%", "%"
-POW, "^", "^"
-NOT, "!", "!"
-EQU, "==", "=="
-NEQU, "!=", "!="
-LORE, "<=", "<="
-GORE, ">=", ">="
-ASSIGN, "=", "="
-ADD_ASSIGN, "+=", "+="
-SUB_ASSIGN, "-=", "-="
-MUL_ASSIGN, "*=", "*="
-DIV_ASSIGN, "/=", "/="
-MOD_ASSIGN, "%=", "%="
-LESS, "<", "<"
-MORE, ">", ">"
-%operators
+ADD "+"
+SUB "-"
+MUL "*"
+DIV "/"
+MOD "%"
+POW "^"
+NOT "!"
+EQU "=="
+NEQU "!="
+LORE "<="
+GORE ">="
+ASSIGN "="
+ADD_ASSIGN "+="
+SUB_ASSIGN "-="
+MUL_ASSIGN "*="
+DIV_ASSIGN "/="
+MOD_ASSIGN "%="
+LESS "<"
+MORE ">"
+%end
 
-%punctuation
-DOT, ".", "."
-COMMA, ",", ","
-COLON, ":", ":"
-CPAREN, ")", ")"
-OPAREN, "(", "("
-OBLOCK, "{", "{"
-CBLOCK, "}", "}"
-OBRACE, "[", "["
-CBRACE, "]", "]"
-%punctuation
 
+# Punctuation is used for syntax only and is never stored in the the AST
+# struct. The format of this is the same as for operators.
+%punctuation
+DOT "."
+COMMA ","
+COLON ":"
+CPAREN ")"
+OPAREN "("
+OBLOCK "{"
+CBLOCK "}"
+OBRACE "["
+CBRACE "]"
+%end
+
+
+# Constructs are tokens that are described by a regular expression. These
+# tokens are being recognized directly by the scanner and there are no
+# regular expressions used.
 %constructs
 SYMBOL, "const char*", "Identifier name"
 STRG_CONST, "const char*", "String constant"
 FLOAT_CONST, "double", "Float constant"
 INT_CONST, "int64_t", "Integer constant"
 UNSIGNED_CONST, "uint64_t", "Unsigned constant"
-%constructs
+%end
 
-%overhead
-END_OF_FILE, "", "END OF FILE"
-END_OF_INPUT, "", "END OF INPUT"
-ERROR, "", "ERROR"
-%overhead
+# These tokens are not found in the source code. They are used to signal the
+# parser of the status of the scanner and so the source code.
+%other
+ERROR
+END_OF_FILE
+END_OF_INPUT
+%end
 
-%tokens
-
+###############################################################################
+#
+# Rules are the actual grammar to be implemented by the generated parser. The
+# format of the rule is different from BNF and others.
+#   The first line is the name of the non-terminal.
+#   One or more lines that are prefixed with a '|' gives the rule predicates.
+#       * Each rule predicate must be on a single line
+#       * Rules are organized so that the one that has the fewest number of
+#         tokens is given first.
+#       * Left recusion of rules is illegal. All recursive rules must be
+#         right-recursive.
+#       * Recursive rules always implement lists. A list is a special construct
+#         that has exactly one line.
+#       * A list item has exactly one item in the list and also a "next"
+#         pointer. When there are more than one alternatives, then they are
+#         condensed to one pointer.
+#   Zero or more lines that have an AST entry.
+#       * If the entry is a non-terminal or a terminal, then the line is
+#         generated to the data structure using the type that is given above.
+#         There will be exactly one word on the line and that word will
+#         identify a terminal or non-terminal.
+#       * If there is more than one word on a line, then that line will be
+#         copied directly to the AST during processing.
+#       * If there are no lines then there is nothing placed into the AST.
+#   The final line of a rule is blank.
+#
 %rules
 
 # The module is the name of this compiled object. When a library is imported,
@@ -118,6 +156,10 @@ ERROR, "", "ERROR"
 # appear as the first thing in the file.
 module
     | MODULE SYMBOL COLON module_type module_body
+    const char* name
+    module_type
+    module_body
+    %end
 
 # There must be exactly one module in a program that is type EXEC. This is
 # where the program entry point is defined and there must be an ENTRY
@@ -127,18 +169,27 @@ module_type
     | EXEC
     | STATIC
     | DYNAMIC
+    int value
+    %end
 
 module_body
     | OBLOCK module_body_list CBLOCK
+    module_body_list
+    %end
 
 module_element
     | namespace_element
     | import_statement
     | entry_definition
+    void* value
+    struct _ast_module_element_t_* next
+    %end
 
 module_body_list
     | module_element module_body_list
-    | module_element
+    struct _ast_module_element_t_* first
+    struct _ast_module_element_t_* last
+    %end
 
 # The import statement is causes the imported module to be included, similar to
 # the way that C include pre-processor statement works. However, it creates a
@@ -148,12 +199,17 @@ module_body_list
 import_statement
     | IMPORT compound_name
     | IMPORT compound_name AS SYMBOL
+    compound_name
+    const char* name
+    %end
 
 # This is the entry point of the program. It's similar to the int main() of a C
 # program but it does not take any parameters. Things like the command line are
 # accessed through libraries, if needed.
 entry_definition
     | ENTRY func_block
+    func_block
+    %end
 
 # Scope is the visibility of all of the objects that follow. The default scope
 # is PRIVATE. The scope can appear at the root level, in a namespace and in a
@@ -162,12 +218,14 @@ scope
     | PUBLIC
     | PRIVATE
     | PROTECTED
+    int value
+    %end
 
 # A type_name defines the type of what follows it. This is a strongly typed
 # language. The NOTHING type defines that the type assignement is deferred until
 # a later point in the code. A variable cannot be assigned, read, or written
 # until the type is assigned using a cast to initialize the value.
-type_name
+type_name_kw
     | FLOAT
     | INTEGER
     | UNSIGNED
@@ -176,25 +234,37 @@ type_name
     | LIST
     | BOOLEAN
     | NOTHING
+    int value
+    %end
+
+type_name
+    | type_name_kw
     | compound_name
-
-empty_parens
-    | OPAREN CPAREN
-
-empty_block
-    | OBLOCK CBLOCK
+    void* value
+    %end
 
 # A compound reference is a path to a specific memory object through the
 # namespace. The runtime is responsible for determining the type information
 # and whether the chain of objects is appropraite for the use.
 compound_reference
     | compound_reference_element DOT compound_reference
-    | compound_reference_element
+    struct _ast_compound_reference_element_t_* first;
+    struct _ast_compound_reference_element_t_* last;
+    %end
 
 compound_reference_element
     | compound_name
     | func_reference
     | array_reference
+    void* value;
+    struct _ast_compound_reference_element_t_* next
+    %end
+
+compound_name_element
+    | SYMBOL
+    const char* value;
+    struct _ast_compound_name_element_t_* next
+    %end
 
 # A compound name is a simple chain of names that has to lead back to a memory
 # object. The runtime is responsible for type checking, however, the compiler
@@ -203,187 +273,321 @@ compound_reference_element
 # assign to a string, but assigning to a class object can only be checked at
 # run time.
 compound_name
-    | SYMBOL DOT compound_name # this is a comment
-    | SYMBOL
+    | compound_name_element DOT compound_name
+    struct _ast_compound_name_element_t_* first
+    struct _ast_compound_name_element_t_* last
+    %end
 
 # All string literals can be formatted. Formatting is handled at runtime and a
 # string can be formatted multiple times. Formatting can also be specified at
 # runtime, so all the parser tries to do is verify that the syntax is possible.
 formatted_string
-    | STRG_CONST expr_parms
-    | STRG_CONST empty_parens
     | STRG_CONST
+    | STRG_CONST OPAREN CPAREN
+    | STRG_CONST OPAREN expr_list CPAREN
+    const char* value
+    expr_list
+    %end
 
 # This is a reference to a function; a function call.
 func_reference
-    | SYMBOL expr_parms
-    | SYMBOL empty_parens
+    | SYMBOL OPAREN CPAREN
+    | SYMBOL OPAREN expr_list CPAREN
+    const char* name
+    expr_list
+    %end
 
 # This is a reference to an array element. An array element can have almost
 # anything as the array index. If it evailuates to a string, then it's a
 # dictionary reference. If it evaulates to a number, then it's a list reference.
 # That value could evaluate from any legal value reference. Also, an array can
 # have multiple indexes (i.e. arr[1][2][3]) and so the parser has to accept that
-# syntax.
+# syntax. The syntax of arr[arr[arr[0]]] is accepted through expressions.
 array_reference
     | SYMBOL array_reference_list
+    array_reference_list
+    const char* name
+    %end
 
 array_brace
     | OBRACE expression CBRACE
+    expression
+    struct _ast_array_brace_t_* next
+    %end
 
 array_reference_list
     | array_brace array_reference_list
-    | array_brace
+    struct _ast_array_brace_t_* first
+    struct _ast_array_brace_t_* last
+    %end
 
 # Namespaces are optional. They are used to fix nameing collisions. Things that
 # are defined inside a namespace use the namespace name as part of the name
 # chain of a compound name or reference.
 namespace_definition
     | NAMESPACE SYMBOL namespace_block
+    const char* name
+    namespace_block
+    %end
 
 namespace_block
+    | OBLOCK CBLOCK
     | OBLOCK namespace_body CBLOCK
-    | empty_block
+    namespace_body
+    %end
 
 namespace_body
     | namespace_element namespace_block
-    | namespace_element
+    struct _ast_namespace_element_t_* first
+    struct _ast_namespace_element_t_* last
+    %end
 
 # Any element that can appear inside a name space can also appear inside a
 # module.
 namespace_element
+    | scope
+    | var_declaration
     | namespace_definition
     | class_definition
-    | func_definition
-    | ctor_definition
     | dtor_definition
-    | var_declaration
-    | CONST var_declaration
-    | scope
+    | ctor_definition
+    | func_definition
+    void* value
+    struct _ast_namespace_element_t_* next
+    %end
 
 # A class definition has one optional parent class. The parent class is simply
 # made to be part of this class, similar to the way that Python does it.
 class_definition
     | CLASS SYMBOL class_parameters class_block
+    const char* name
+    class_parameters
+    class_block
+    %end
 
 class_parameters
+    | OPAREN CPAREN
     | OPAREN compound_name CPAREN
-    | empty_parens
+    compound_name
+    %end
 
 class_block
+    | OBLOCK CBLOCK
     | OBLOCK class_body CBLOCK
-    | empty_block
+    class_body
+    %end
 
 class_body
     | class_body_element class_body
-    | class_body_element
+    struct _ast_class_body_element_t_* first
+    struct _ast_class_body_element_t_* last
+    %end
 
 # A class body is very simple. It can only have variable and function
 # declarations. The scope determins access to elements in the class similar
 # to the way that C++ does it.
 class_body_element
-    | var_declaration
-    | CONST var_declaration
-    | func_declaration
     | scope
+    | var_declaration
+    | func_declaration
+    | func_destroy_declaration
+    | func_create_declaration
+    void* value
+    struct _ast_class_body_element_t_* next
+    %end
+
+name_declaration
+    | type_name SYMBOL
+    type_name
+    const char* name;
+    %end
 
 var_declaration
-    | type_name SYMBOL
+    | name_declaration
+    | CONST name_declaration
+    name_declaration
+    bool is_const
+    %end
+
+name_declaration_elem
+    | name_declaration
+    name_declaration
+    struct _ast_name_declaration_t_* next
+    %end
 
 # Used for function definitions and declarations.
-var_declaration_list
-    | var_declaration COMMA var_declaration_list
-    | var_declaration
+name_declaration_list
+    | name_declaration COMMA name_declaration_list
+    struct _ast_name_declaration_t_* first
+    struct _ast_name_declaration_t_* last
+    %end
+
+func_destroy_declaration
+    | DESTROY
+    %end
+
+func_create_declaration
+    | CREATE func_decl_parms
+    func_decl_parms
+    %end
 
 func_declaration
     | type_name SYMBOL func_decl_parms
-    | CREATE func_decl_parms
-    | DESTROY
+    type_name
+    func_decl_parms
+    const char* name
+    %end
 
 func_decl_parms
-    | OPAREN var_declaration_list CPAREN
-    | empty_parens
+    | OPAREN CPAREN
+    | OPAREN name_declaration_list CPAREN
+    name_declaration_list
+    %end
 
 bool_literal
     | TRUE
     | FALSE
+    int value
+    %end
 
+# This could go into unlimited recursion on some inputs....
 primary
-    | compound_reference
     | const_expression
-    | expr_parens
+    | compound_reference
+    | OPAREN expression CPAREN
+    expression
+    compound_reference
+    const_expression
+    %end
 
 const_expression
-    | formatted_string
-    | bool_literal
     | FLOAT_CONST
     | INT_CONST
     | UNSIGNED_CONST
+    | bool_literal
+    | formatted_string
+    double fnum
+    uint64_t unum
+    int64_t inum
+    int const_type
+    bool_literal
+    formatted_string
+    %end
 
 expression
-    | expr_and OR expression
+    | expr_or
+    | type_name OPAREN expr_unary CPAREN
+    type_name
+    expression
+    %end
+
+expr_or
     | expr_and
+    | expr_and OR expression
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator;
+    %end
 
 expr_and
-    | expr_equ AND expr_and
     | expr_equ
+    | expr_equ AND expr_and
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_equ
+    | expr_compe
     | expr_compe EQU expr_equ
     | expr_compe NEQU expr_equ
-    | expr_compe
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_compe
+    | expr_comp
     | expr_comp LORE expr_compe
     | expr_comp GORE expr_compe
-    | expr_comp
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_comp
+    | expr_term
     | expr_term LESS expr_comp
     | expr_term MORE expr_comp
-    | expr_term
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_term
+    | expr_pow
     | expr_pow ADD expr_term
     | expr_pow SUB expr_term
-    | expr_pow
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_pow
-    | expr_fact POW expr_pow
     | expr_fact
+    | expr_fact POW expr_pow
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_fact
+    | expr_unary
     | expr_unary MUL expr_fact
     | expr_unary DIV expr_fact
     | expr_unary MOD expr_fact
-    | expr_unary
+    struct _ast_expression_t_* left
+    struct _ast_expression_t_* right
+    int operator
+    %end
 
 expr_unary
-    | primary
     | SUB expr_unary
     | ADD expr_unary
     | NOT expr_unary
-    | type_name OPAREN expr_unary CPAREN
-
-expr_parms
-    | OPAREN expr_list CPAREN
+    | primary
+    struct _ast_expression_t_* value
+    int operator
+    %end
 
 expr_list
     | expression COMMA expr_list
-    | expression
-
-expr_parens
-    | OPAREN expression CPAREN
+    struct _ast_expression_t_* first
+    struct _ast_expression_t_* last
+    %end
 
 func_definition
-    | var_declaration COLON SYMBOL func_decl_parms func_block
+    | name_declaration COLON SYMBOL func_decl_parms func_block
+    name_declaration
+    const char* name
+    func_decl_parms
+    func_block
+    %end
 
 ctor_definition
     | SYMBOL COLON CREATE func_decl_parms func_block
+    const char* name
+    func_block
+    %end
 
 dtor_definition
     | SYMBOL COLON DESTROY func_block
+    const char* name
+    func_block
+    %end
 
+# Assignment is not a part of expressions because it cannot appear in an
+# expression. Example: 'if(x=(1+2)*3){}' is illegal.
 assignment_oper
     | ASSIGN
     | ADD_ASSIGN
@@ -391,38 +595,56 @@ assignment_oper
     | MUL_ASSIGN
     | DIV_ASSIGN
     | MOD_ASSIGN
+    int operator
+    %end
 
 assignment_tail
     | assignment_oper expression
+    assignment_oper
+    expression
+    %end
 
 assignment
     | compound_reference assignment_tail
+    compound_reference
+    assignment_tail
+    %end
 
+# If a var is defined but is not assigned, then it is a runtime error to try
+# to read from it. If a var is defined as CONST then it's a runtime error to
+# try to assign to it more than once.
 data_definition
     | var_declaration
     | var_declaration assignment_tail
+    var_declaration
+    assignment_tail
+    %end
 
 func_block
+    | OBLOCK CBLOCK
     | OBLOCK func_block_list CBLOCK
-    | empty_block
+    func_block_list
+    %end
 
 func_block_list
-    | func_block_elem
     | func_block_elem func_block_list
+    struct _ast_func_block_elem_t_* first
+    struct _ast_func_block_elem_t_* last
+    %end
 
 # This rule is the catch-all for everything that can go into a function body.
 # In Simple, a function body is the same in all cases, however, if break or
 # continue is found in a block that is not a loop block, then that is a semantic
 # error, which is detected in the code, not the actual grammar.
 func_block_elem
-    | BREAK
-    | CONTINUE
-    | IBEGIN STRG_CONST IEND
-    | EXIT expr_parens
-    | YIELD OPAREN SYMBOL CPAREN
-    | RAISE OPAREN compound_name CPAREN
+    | break_statement
+    | continue_statement
+    | inline_statement
+    | exit_statement
+    | yield_statement
     | return_statement
     | trace_statement
+    | raise_statement
     | print_statement
     | data_definition
     | assignment
@@ -434,27 +656,80 @@ func_block_elem
     | switch_case_clause
     | if_else_clause
     | func_block
+    void* statement
+    struct _ast_func_block_elem_t_* next
+    %end
+
+# Small and single keyword elements are defined as non-terminal to make the
+# func_list a single list element instead of a bunch of unrelated pointers
+# that may or may not be assigned a value.
+
+# If break or continue are located out of a loop, then that generates a
+# compile-time error that is detected by traversing the AST.
+break_statement
+    | BREAK
+    %end
+
+continue_statement
+    | CONTINUE
+    %end
+
+# An inline block emits the contents of it as raw C code where it is defined.
+# This is mainly used to interface external libraries to the Simple language.
+inline_statement
+    | IBEGIN STRG_CONST IEND
+    const char* value
+    %end
+
+# If the expression does not evaluate to a number, then the value is truncated
+# to be exactly 1.
+exit_statement
+    | EXIT OPAREN expression CPAREN
+    expression
+    %end
+
+# YIELD is used to implement iterators that can only be used in the FOR
+# construct. The compound name must evaluate to an object that is accessible
+# to both this scope and the caller's scope. Otherwise, it's a runtime error.
+yield_statement
+    | YIELD OPAREN compound_name CPAREN
+    compound_name
+    %end
+
+# RAISE is used for a non-local GOTO to handle errors. It is not intended as
+# flow control logic. The compound name must evaluate to a class object and it
+# is copied by value to the exception clause that is going to handle it.
+raise_statement
+    | RAISE OPAREN compound_name CPAREN
+    compound_name
+    %end
 
 # Print a formatted string, or just a new line if there is no parameter. No
 # provision is made for multiple parameters.
 print_statement
     | PRINT
-    | PRINT empty_parens
+    | PRINT OPAREN CPAREN
     | PRINT OPAREN formatted_string CPAREN
+    formatted_string
+    %end
 
 # Similar to the print statement but includes the file and function names.
 trace_statement
     | TRACE
-    | TRACE empty_parens
+    | TRACE OPAREN CPAREN
     | TRACE OPAREN formatted_string CPAREN
+    formatted_string
+    %end
 
 # Return statement does exaclty what you would expect.
 return_statement
     | RETURN
-    | RETURN empty_parens
-    | RETURN expr_parens
+    | RETURN OPAREN CPAREN
+    | RETURN OPAREN expression CPAREN
+    expression
+    %end
 
-# This convouluted rule has a notion of a "final" clause. In Simple, a blank
+# This convoluted rule has a notion of a "final" clause. In Simple, a blank
 # expression evaluates to TRUE. There is no notion of a "else if". The else
 # clause accepts an expression and acts as an "elif" would in other languages.
 # A else clause with a blank expression appears in the middle of a if/else
@@ -462,63 +737,115 @@ return_statement
 # if/else chain. Curly braces are mandatory for all code blocks.
 if_else_clause
     | if_clause
-    | if_clause else_clause_list
     | if_clause else_clause_final
+    | if_clause else_clause_list
     | if_clause else_clause_list else_clause_final
+    if_clause
+    else_clause_list
+    else_clause_final
+    %end
 
 if_clause
-    | IF expr_parens func_block
+    | IF OPAREN expression CPAREN func_block
+    expression
+    func_block
+    %end
 
 else_clause
-    | ELSE expr_parens func_block
+    | ELSE OPAREN expression CPAREN func_block
+    expression
+    func_block
+    struct _ast_else_clause_t_* next
+    %end
 
 else_clause_list
-    | else_clause
     | else_clause else_clause_list
+    struct _ast_else_clause_t_* first
+    struct _ast_else_clause_t_* last
+    %end
 
 else_clause_final
-    | ELSE empty_parens func_block
+    | ELSE OPAREN CPAREN func_block
     | ELSE func_block
+    func_block
+    %end
 
 # WHILE clause is very simple and functions as it does in other languages.
 while_clause
-    | WHILE expr_parens func_block
+    | WHILE OPAREN expression CPAREN func_block
+    func_block
+    expression
+    %end
 
 # DO clause functions the same as it does in the C language.
 do_clause
-    | DO func_block WHILE expr_parens
+    | DO func_block WHILE OPAREN expression CPAREN
+    func_block
+    expression
+    %end
 
 # The FOR clause has 2 variants. It can iterate a range of integers for
 # counting. The form of that is "for(x in 0 to 12) {}". It can also iterate a
 # data structure such as a list or dictionary. The form of that is
 # "for(x in data.structure.name){}" returns whatever is found in the iteration.
+# The FOR construct is also used for iterators. The value of the YIELD
+# statement is placed in the compound reference, which must be able to accept
+# the value that is produced by the YIELD. If there is a type clash then it
+# creates a runtime error.
 for_entry
     | FOR OPAREN SYMBOL IN
+    const char* local
+    %end
 
-for_clause
+for_clause_reference
     | for_entry compound_reference CPAREN func_block
+    for_entry
+    compound_reference
+    func_block
+    %end
+
+for_clause_expr
     | for_entry expression TO expression CPAREN func_block
+    func_block
+    struct _ast_expression_t_* first
+    struct _ast_expression_t_* last
+    %end
 
 # SWITCH/CASE operates similarly to it does in C except that it can accept a
 # string literal as well as an integer literal. The syntax is different in that
-# the case clauses are function blocks with all associated scoping rules.
+# the case clauses are function blocks with all associated scoping rules. The
+# "final" clause is mandatory.
 switch_case_clause
     | switch_clause case_clause_list case_clause_final
+    switch_clause
+    case_clause_list
+    case_clause_final
+    %end
 
 switch_clause
-    | SWITCH expr_parens OBLOCK
+    | SWITCH OPAREN expression CPAREN OBLOCK
+    expression
+    %end
 
 case_clause
     | CASE OPAREN const_expression CPAREN func_block
+    const_expression
+    func_block
+    struct _ast_case_clause_t_* next
+    %end
 
 case_clause_list
     | case_clause case_clause_list
-    | case_clause
+    struct _ast_case_clause_t_* first
+    struct _ast_case_clause_t_* last
+    %end
 
 # Final case clause is required for SWITCH/CASE.
 case_clause_final
     | CBLOCK
     | DEFAULT func_block CBLOCK
+    func_block
+    %end
 
 # TRY block works as expected. If soemthing raises an exception then it is
 # attempted to be caught in an EXCEPT block in the TRY/EXCEPT clause chain. If
@@ -528,21 +855,38 @@ try_except_clause
     | try_clause except_clause_list
     | try_clause except_clause_final
     | try_clause except_clause_list except_clause_final
+    try_clause
+    try_clause_list
+    try_clause_final
+    %end
 
 try_clause
     | TRY func_block
+    func_block
+    %end
 
 # The compound name must name a class. The class in instntiated as a result of
-# being raised and the resulting object is in the SYMBOL.
+# being raised and the resulting object is in the SYMBOL. The compound name
+# must evaluate to a class object.
 except_clause
     | EXCEPT OPAREN compound_name CPAREN AS SYMBOL func_block
+    compound_name
+    func_block
+    const char* local
+    struct _ast_except_clause_t_* next
+    %end
 
 except_clause_list
     | except_clause except_clause_list
-    | except_clause
+    struct _ast_except_clause_t_* first
+    struct _ast_except_clause_t_* last
+    %end
 
+# Blank except clause handles any exception that was raised in it's TRY block.
 except_clause_final
-    | EXCEPT empty_parens func_block
-    | EXCEPT func_block
+    | EXCEPT OPAREN CPAREN func_block
+    | EXCEPT func_block # This is a test comment
+    func_block
+    %end
 
-%rules
+
