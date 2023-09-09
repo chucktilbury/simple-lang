@@ -9,20 +9,20 @@ OBJS	=	main.o \
 			ptrlst.o \
 			scanner.o \
 			str.o \
-			ast.o \
 			tokens.o \
+			ast.o \
 			parser.o
 
 GEN_FILES	=	parser.c \
 			parser.h \
 			ast.c \
 			ast.h \
-			tokens.c \
-			tokens.h
+			token_struct.h \
+			token_types.h
 
-COPTS	=	-Wall -Wextra -Wpedantic
+COPTS	=	-Wall -Wextra -Wpedantic -Wno-unused-variable
 DEBUG 	=	-g
-CFG		=	-DENABLE_GC
+CFG		=	-DENABLE_GC -DENABLE_TRACE
 
 all: $(TARGET)
 
@@ -44,9 +44,9 @@ mem.o: mem.c mem.h
 ptrlst.o: ptrlst.c ptrlst.h
 scanner.o: scanner.c scanner.h
 str.o: str.c str.h
+tokens.o: tokens.c tokens.h
 ast.o: ast.c ast.h
 parser.o: parser.c parser.h
-tokens.o: tokens.c tokens.h
 
 clean:
 	-rm -f $(TARGET) $(OBJS)

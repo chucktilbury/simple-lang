@@ -248,21 +248,21 @@ type_name
 # and whether the chain of objects is appropraite for the use.
 compound_reference
     | compound_reference_element DOT compound_reference
-    struct _ast_compound_reference_element_t_* first;
-    struct _ast_compound_reference_element_t_* last;
+    struct _ast_compound_reference_element_t_* first
+    struct _ast_compound_reference_element_t_* last
     %end
 
 compound_reference_element
     | compound_name
     | func_reference
     | array_reference
-    void* value;
+    void* value
     struct _ast_compound_reference_element_t_* next
     %end
 
 compound_name_element
     | SYMBOL
-    const char* value;
+    const char* value
     struct _ast_compound_name_element_t_* next
     %end
 
@@ -399,7 +399,7 @@ class_body_element
 name_declaration
     | type_name SYMBOL
     type_name
-    const char* name;
+    const char* name
     %end
 
 var_declaration
@@ -412,14 +412,14 @@ var_declaration
 name_declaration_elem
     | name_declaration
     name_declaration
-    struct _ast_name_declaration_t_* next
+    struct _ast_name_declaration_elem_t_* next
     %end
 
 # Used for function definitions and declarations.
 name_declaration_list
-    | name_declaration COMMA name_declaration_list
-    struct _ast_name_declaration_t_* first
-    struct _ast_name_declaration_t_* last
+    | name_declaration_elem COMMA name_declaration_list
+    struct _ast_name_declaration_elem_t_* first
+    struct _ast_name_declaration_elem_t_* last
     %end
 
 func_destroy_declaration
@@ -486,7 +486,7 @@ expr_or
     | expr_and OR expression
     struct _ast_expression_t_* left
     struct _ast_expression_t_* right
-    int operator;
+    int operator
     %end
 
 expr_and
@@ -560,10 +560,16 @@ expr_unary
     int operator
     %end
 
+expr_list_elem
+    | expression
+    expression
+    struct _ast_expr_list_elem_t_* next
+    %end
+
 expr_list
     | expression COMMA expr_list
-    struct _ast_expression_t_* first
-    struct _ast_expression_t_* last
+    struct _ast_expr_list_elem_t_* first
+    struct _ast_expr_list_elem_t_* last
     %end
 
 func_definition

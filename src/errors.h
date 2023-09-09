@@ -13,4 +13,11 @@ int get_num_warnings();
 #define fatal(fmt, ...) __fatal(__func__, __LINE__, (fmt), ## __VA_ARGS__)
 void __fatal(const char* func, int line, const char* fmt, ...);
 
+#ifdef ENABLE_TRACE
+void __trace(const char* func, int line);
+#define TRACE() __trace(__func__, __LINE__)
+#else
+#define TRACE()
+#endif
+
 #endif

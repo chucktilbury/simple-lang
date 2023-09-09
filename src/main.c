@@ -6,12 +6,13 @@
 #include <stdint.h>
 
 #include "filebuf.h"
-#include "parser.h"
-
-#include "ast.h"
 #include "errors.h"
-
 #include "scanner.h"
+#include "tokens.h"
+
+#include "token_types.h"
+#include "parser.h"
+#include "ast.h"
 
 
 void print_token(Token* tok) {

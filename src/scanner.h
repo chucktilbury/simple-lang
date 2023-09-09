@@ -2,18 +2,19 @@
 #define _SCANNER_H
 
 #include <stdint.h>
+#include "token_types.h"
 #include "tokens.h"
 #include "str.h"
 
 typedef struct {
-    token_type_t type;
+    TokenType type;
     String str;
     union {
         const char* str;
         double fnum;
         uint64_t unum;
         int64_t inum;
-        token_type_t symbol;
+        TokenType symbol;
     } value;
     const char* fname;
     int line;

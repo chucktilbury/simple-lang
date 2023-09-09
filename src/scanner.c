@@ -76,7 +76,7 @@ static void get_name() {
  *
  * @return TokenType
  */
-static token_type_t check_keyword(const char* str) {
+static TokenType check_keyword(const char* str) {
 
     return search_keyword(str);
 }

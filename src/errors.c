@@ -77,3 +77,8 @@ int get_num_warnings() {
 
     return warnings;
 }
+
+void __trace(const char* func, int line) {
+
+    fprintf(stderr, "Trace: %s:%d\n", func, line);
+}
