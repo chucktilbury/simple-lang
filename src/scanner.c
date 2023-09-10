@@ -9,6 +9,7 @@
 #include "errors.h"
 #include "scanner.h"
 #include "filebuf.h"
+#include "tokens.h"
 
 // The current token
 static Token crnt_tok;
@@ -330,7 +331,7 @@ static void get_float_tail() {
  * @brief Reset the token to be blank.
  *
  */
-static void clear_token() {
+static void reset_token() {
 
     clear_string(crnt_tok.str);
     crnt_tok.type = END_OF_INPUT;
@@ -358,7 +359,7 @@ void consume_token() {
     //int state = 0;
     int finished = 0;
 
-    clear_token();
+    reset_token();
 
     while(!finished) {
         ch = get_crnt_char();
@@ -372,12 +373,14 @@ void consume_token() {
         }
         else if(ch == EOI) {
             crnt_tok.type = END_OF_INPUT;
+            crnt_tok.value.symbol = END_OF_INPUT;
             finished++;
         }
         else if(isalpha(ch)||ch == '_') {
             save_char();
             get_name();
             crnt_tok.type = check_keyword(get_string_ptr(crnt_tok.str));
+            crnt_tok.value.str = _copy_str(get_string_ptr(crnt_tok.str));
             finished++;
         }
         // number that starts with 0
@@ -411,6 +414,17 @@ void consume_token() {
             else {
                 crnt_tok.type = INT_CONST;
             }
+
+            if(crnt_tok.type == UNSIGNED_CONST)
+                crnt_tok.value.inum = strtol(get_string_ptr(crnt_tok.str), NULL, 16);
+            else if(crnt_tok.type == INT_CONST)
+                crnt_tok.value.inum = strtol(get_string_ptr(crnt_tok.str), NULL, 10);
+            else if(crnt_tok.type == FLOAT_CONST)
+                crnt_tok.value.fnum = strtod(get_string_ptr(crnt_tok.str), NULL);
+            else {
+                syntax("Unknown error while scanning number");
+                crnt_tok.type = ERROR;
+            }
             finished++;
         }
         // another digit
@@ -434,23 +448,35 @@ void consume_token() {
                 syntax("Malformed number. Expected space or operator but got '%c'", ch);
                 crnt_tok.type = ERROR;
             }
+
+            if(crnt_tok.type == INT_CONST)
+                crnt_tok.value.inum = strtol(get_string_ptr(crnt_tok.str), NULL, 10);
+            else if(crnt_tok.type == FLOAT_CONST)
+                crnt_tok.value.fnum = strtod(get_string_ptr(crnt_tok.str), NULL);
+            else {
+                syntax("Unknown error while scanning number");
+                crnt_tok.type = ERROR;
+            }
             finished++;
         }
         // read a single quote string
         else if(ch == '\'') {
             get_squote();
             crnt_tok.type = STRG_CONST;
+            crnt_tok.value.str = _copy_str(get_string_ptr(crnt_tok.str));
             finished++;
         }
         // read a double quote string
         else if(ch == '\"') {
             get_dquote();
             crnt_tok.type = STRG_CONST;
+            crnt_tok.value.str = _copy_str(get_string_ptr(crnt_tok.str));
             finished++;
         }
         // read an operator. These a figured out in a switch/case elsewhere.
         else if(ispunct(ch)) {
             get_operator();
+            crnt_tok.value.symbol = crnt_tok.type;
             finished++;
         }
         // Read a character that we don't know how to handle. Skip it,
@@ -460,6 +486,10 @@ void consume_token() {
             consume_char();
         }
     }
+
+    crnt_tok.fname = get_file_name();
+    crnt_tok.line = get_line_no();
+    crnt_tok.col = get_col_no();
 }
 
 /**

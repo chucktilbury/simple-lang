@@ -42,8 +42,8 @@ MODULE, "module", "module keyword"
 DEFAULT, "default", "default keyword"
 PUBLIC, "public", "public keyword"
 PRIVATE, "private", "private keyword"
-PROTECTED, "protected", "protected  keyword"
-INTEGER, "int", "integer  keyword"
+PROTECTED, "protected", "protected keyword"
+INTEGER, "int", "integer keyword"
 UNSIGNED, "unsigned", "unsigned keyword"
 FLOAT, "float", "float keyword"
 STRING, "string", "string keyword"
@@ -813,8 +813,8 @@ for_clause_reference
 for_clause_expr
     | for_entry expression TO expression CPAREN func_block
     func_block
-    struct _ast_expression_t_* first
-    struct _ast_expression_t_* last
+    struct _ast_expression_t_* from
+    struct _ast_expression_t_* until
     %end
 
 # SWITCH/CASE operates similarly to it does in C except that it can accept a

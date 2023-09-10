@@ -20,17 +20,19 @@ GEN_FILES	=	parser.c \
 			token_struct.h \
 			token_types.h
 
-COPTS	=	-Wall -Wextra -Wpedantic -Wno-unused-variable
+WARNS	=	-Wno-unused-variable -Wno-maybe-uninitialized
+COPTS	=	-Wall -Wextra -Wpedantic
 DEBUG 	=	-g
 CFG		=	-DENABLE_GC -DENABLE_TRACE
+LIBS	= 	-lgc
 
 all: $(TARGET)
 
 %.o:%.c
-	gcc $(DEBUG) $(COPTS) $(CFG) -c -o $@ $<
+	gcc $(DEBUG) $(WARNS) $(COPTS) $(CFG) -c -o $@ $<
 
 $(TARGET): $(OBJS)
-	gcc $(DEBUG) $(COPTS) $(CFG) -o $@ $(OBJS) -lgc
+	gcc $(DEBUG) -o $@ $(OBJS) $(LIBS)
 
 $(GEN_FILES): scripts/grammar.txt scripts/gen_parser.py
 	make --directory scripts all

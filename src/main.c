@@ -20,7 +20,8 @@ void print_token(Token* tok) {
     if(tok != NULL) {
         printf("token name: \"%s\"\n", get_string_ptr(tok->str));
         printf("      type: %s (%d)\n", tok_to_str(tok->type), tok->type);
-        printf("      %s:%d:%d\n", get_file_name(), get_line_no(), get_col_no());
+        printf("      %s:%d:%d\n", tok->fname, tok->line, tok->col);
+        //printf("      %s:%d:%d\n", get_file_name(), get_line_no(), get_col_no());
     }
     else
         printf("NULL token\n");

@@ -3,12 +3,11 @@
 
 #include <stdint.h>
 #include "token_types.h"
-#include "tokens.h"
 #include "str.h"
 
 typedef struct {
     TokenType type;
-    String str;
+    String* str;
     union {
         const char* str;
         double fnum;

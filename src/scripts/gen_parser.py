@@ -198,7 +198,7 @@ def emit_token_types(data):
         for item in dict(sorted(data['keywords'].items())):
             fp.write("    {%s, \"%s\"},\n"%(item, data['keywords'][item]['str']))
         fp.write("};\n")
-        fp.write("#define NUM_KEYWORDS (sizeof(token_list_t)/sizeof(token_list))\n\n")
+        fp.write("#define NUM_KEYWORDS (sizeof(token_list)/sizeof(token_list_t))\n\n")
 
         fp.write("#define TOK_TO_STR(t) (\\\n")
         for item in data['other']:
@@ -330,15 +330,17 @@ def emit_parser(data):
     with open("parser.h", "w") as fp:
         fp.write("/*\n *  This file is generated.\n *   --- DO NOT EDIT ---\n */\n")
         fp.write("#ifndef _PARSER_H\n#define _PARSER_H\n\n")
+        fp.write("#include \"tokens.h\"\n")
         fp.write("#include \"ast.h\"\n\n")
 
         fp.write("typedef void* TokenQueue;\n\n")
 
         fp.write("typedef struct _parser_state_t_ {\n")
         fp.write("    bool found;\n")
-        fp.write("    TokenQueue* toks;\n")
+        fp.write("    token_queue_t* toks;\n")
         fp.write("} parser_state_t;\n\n")
 
+        fp.write("parser_state_t* create_parser_state();\n\n")
         for item in data['rules']:
             fp.write("ast_%s_t* parse_%s(parser_state_t* state);\n"%(item, item))
         fp.write("\n#endif /* _PARSER_H */\n\n")
@@ -352,8 +354,16 @@ def emit_parser(data):
         fp.write("#include \"errors.h\"\n")
         fp.write("#include \"parser.h\"\n")
         fp.write("#include \"ast.h\"\n")
+        fp.write("#include \"mem.h\"\n")
         fp.write("#include \"token_types.h\"\n\n")
 
+        fp.write("parser_state_t* create_parser_state() {\n")
+        fp.write("    parser_state_t* ptr = _alloc_ds(parser_state_t);\n")
+        fp.write("    ptr->toks = create_token_queue();\n")
+        fp.write("    return ptr;\n")
+        fp.write("}\n\n")
+
+        # Preceeding comment and function declaration
         for item in data['rules']:
             fp.write("/*\n")
             fp.write(" *    %s\n"%(item))
@@ -362,9 +372,46 @@ def emit_parser(data):
             fp.write(" */\n")
             fp.write("ast_%s_t* parse_%s(parser_state_t* state) {\n\n"%(item, item))
             fp.write("    TRACE();\n")
+
+            # local variables
             for line in data['ast'][item]:
-                fp.write("    %s;\n"%(line))
+                if 'first' in line:
+                    fp.write("    %s;\n"%(line.replace('first', 'node')))
+                elif 'last' in line:
+                    pass
+                else:
+                    fp.write("    %s;\n"%(line))
             fp.write("    state->found = false;\n\n")
+
+            # if clauses for the rule alternatives
+            s = 'if'
+            for line in data['rules'][item]:
+                fp.write("    // parse rule: %s\n"%(line))
+                fp.write("    %s(state->found == false) {\n"%(s))
+                a = line.split()
+                for thing in a:
+                    fp.write("        // look for a %s\n"%(thing))
+                fp.write("    }\n")
+                s = 'else if'
+
+            # if clause for error
+            fp.write("    // publish the error.\n")
+            fp.write("    else if(state->found == false) {\n")
+            fp.write("    }\n")
+
+            # if clause for success
+            fp.write("    // the rule parse succeeded.\n")
+            fp.write("    else {\n")
+            fp.write("        return create_%s("%(item))
+            a = []
+            for line in data['ast'][item]:
+                n = line.split()[-1]
+                if n == 'first':
+                    a.append('node')
+                elif n != 'next' and n != 'last':
+                    a.append(n)
+            fp.write("%s);\n"%(", ".join(a)))
+            fp.write("    }\n\n")
             fp.write("    return NULL;\n")
             fp.write("}\n\n")
 

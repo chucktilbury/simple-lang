@@ -16,6 +16,7 @@
 #define _realloc_ds_array(p, t, n) (t*)GC_REALLOC((p), sizeof(t) * (n))
 #define _copy_str(s) GC_STRDUP((s))
 #define _copy_data(p, s) GC_STRNDUP((p), (s))
+#define _copy_ds(p, t) (t*)GC_STRNDUP((const char*)(p), sizeof(t))
 #define _free(p) GC_FREE((void*)p)
 
 #else /* not ENABLE_GC */
@@ -29,6 +30,7 @@
 #define _realloc_ds_array(p, t, n) (t*)mem_realloc((p), sizeof(t) * (n))
 #define _copy_str(s) mem_copy((void*)(s), strlen(s) + 1)
 #define _copy_data(p, s) mem_copy((void*)(p), (s))
+#define _copy_ds(p, t) (t*)mem_copy((void*)(p), sizeof(t))
 #define _free(p) mem_free((void*)(p))
 
 #include <stddef.h>

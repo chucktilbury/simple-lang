@@ -27,6 +27,14 @@ typedef struct _file_stack_ {
 static FileStack* file_stack = NULL;
 static int crnt_char;
 
+// This is a hack that fixes the issue where trying to get the file name and
+// line number after all of the files have been closed returns an unhelpful
+// value. This simply stores whatever the last values were before the file
+// was closed to return those instead.
+static const char* fn;
+static int ln;
+static int cn;
+
 /**
  * @brief Create the scanner and open the initial file.
  *
@@ -38,8 +46,8 @@ void init_charbuffer(const char* fname) {
     open_file(fname);
 
     // prime the pump
-    //consume_char();
-    crnt_char = fgetc(file_stack->fp);
+    consume_char();
+    //crnt_char = fgetc(file_stack->fp);
 }
 
 /**
@@ -78,6 +86,11 @@ void close_file() {
         file_stack = file_stack->next;
 
         fclose(tmp->fp);
+
+        // note that we are using GC here...
+        fn = tmp->fname;
+        ln = tmp->line;
+        cn = tmp->col;
     }
 }
 
@@ -91,7 +104,7 @@ const char* get_file_name() {
     if(file_stack != NULL)
         return file_stack->fname;
     else
-        return "no file open";
+        return fn;
 }
 
 /**
@@ -104,7 +117,7 @@ int get_line_no() {
     if(file_stack != NULL)
         return file_stack->line;
     else
-        return -1;
+        return ln;
 }
 
 /**
@@ -117,7 +130,7 @@ int get_col_no() {
     if(file_stack != NULL)
         return file_stack->col;
     else
-        return -1;
+        return cn;
 }
 
 /**
@@ -129,23 +142,24 @@ int get_col_no() {
  */
 int consume_char() {
 
-    if(crnt_char == EOI)
-        return EOI;
-
     int ch;
     if(file_stack != NULL) {
+
+        if(crnt_char == EOI)
+            return EOI;
+        else if(crnt_char == '\n') {
+            file_stack->line++;
+            file_stack->col = 1;
+        }
+        else
+            file_stack->col++;
+
         ch = fgetc(file_stack->fp);
 
         if(ch == EOF) {
             close_file();
             return consume_char();
         }
-        else if(ch == '\n') {
-            file_stack->line++;
-            file_stack->col = 1;
-        }
-        else
-            file_stack->col++;
     }
     else
         ch = EOI;
